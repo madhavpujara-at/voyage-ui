@@ -60,6 +60,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, isLoading = false, erro
           onChange={(e) => setEmail(e.target.value)}
           error={validationErrors.email}
           required
+          textColor='text-blue-800'
+          placeholderColor='placeholder-purple-300'
         />
 
         <FormField
@@ -71,6 +73,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, isLoading = false, erro
           onChange={(e) => setPassword(e.target.value)}
           error={validationErrors.password}
           required
+          textColor='text-blue-800'
+          placeholderColor='placeholder-purple-300'
         />
 
         <div className='mt-6'>

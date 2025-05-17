@@ -32,37 +32,41 @@ const Navbar: React.FC<NavbarProps> = ({ username, userRole, onLogout }) => {
             <div className='hidden sm:ml-6 sm:flex sm:space-x-8'>
               {/* Analytics tab is visible to admin and tech_lead */}
               {(userRole === UserRole.ADMIN || userRole === UserRole.TECH_LEAD) && (
-                <Link href='/analytics'>
-                  <a className='inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700'>
-                    Analytics
-                  </a>
+                <Link
+                  href='/analytics'
+                  className='inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                >
+                  Analytics
                 </Link>
               )}
 
               {/* Create Kudos tab is visible to admin and tech_lead */}
               {(userRole === UserRole.ADMIN || userRole === UserRole.TECH_LEAD) && (
-                <Link href='/create-kudos'>
-                  <a className='inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700'>
-                    Create Kudos
-                  </a>
+                <Link
+                  href='/create-kudos'
+                  className='inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                >
+                  Create Kudos
                 </Link>
               )}
 
               {/* Team Members tab is visible only to admin */}
               {userRole === UserRole.ADMIN && (
-                <Link href='/team-members'>
-                  <a className='inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700'>
-                    Team Members
-                  </a>
+                <Link
+                  href='/team-members'
+                  className='inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                >
+                  Team Members
                 </Link>
               )}
 
               {/* Tech Leads tab is visible only to admin */}
               {userRole === UserRole.ADMIN && (
-                <Link href='/tech-leads'>
-                  <a className='inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700'>
-                    Tech Leads
-                  </a>
+                <Link
+                  href='/tech-leads'
+                  className='inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                >
+                  Tech Leads
                 </Link>
               )}
             </div>

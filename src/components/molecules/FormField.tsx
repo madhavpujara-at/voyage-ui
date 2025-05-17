@@ -7,10 +7,12 @@ interface FormFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   id: string;
   error?: string;
   required?: boolean;
+  textColor?: string;
+  placeholderColor?: string;
 }
 
 const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
-  ({ label, id, error, required = false, className = '', ...props }, ref) => {
+  ({ label, id, error, required = false, className = '', textColor, placeholderColor, ...props }, ref) => {
     return (
       <div className={`mb-4 ${className}`}>
         <Label htmlFor={id} required={required}>
@@ -23,6 +25,8 @@ const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
           aria-invalid={error ? 'true' : 'false'}
           aria-describedby={error ? `${id}-error` : undefined}
           required={required}
+          textColor={textColor}
+          placeholderColor={placeholderColor}
           {...props}
         />
         {error && (

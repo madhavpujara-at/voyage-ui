@@ -38,9 +38,7 @@ alwaysApply: false
 │   │       │   └── useCases/     # Business logic operations/workflows (e.g., CreateUserUseCase.ts)
 │   │       │       └── [UseCaseName].ts
 │   │       │
-│   │       ├── infrastructure/ # Implementation of domain interfaces (API clients, actual repositories)
-│   │       │   ├── api/          # API client specific to this feature's external services (if any)
-│   │       │   │   └── [FeatureName]ApiClient.ts 
+│   │       ├── infrastructure/ # Implementation of domain interfaces (actual repositories implementation)
 │   │       │   └── repositories/ # Data access implementations (e.g., UserApiRepository.ts)
 │   │       │       └── [RepositoryName].ts # Implements I[RepositoryName].ts from domain layer
 │   │       │

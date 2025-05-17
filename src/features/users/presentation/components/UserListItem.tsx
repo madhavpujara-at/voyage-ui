@@ -52,7 +52,7 @@ const UserListItem: React.FC<UserListItemProps> = ({ user, onPromote, onEdit, on
               Promote to Lead
             </Button>
           )}
-          {onEdit && (
+          {/* {onEdit && (
             <Button variant='secondary' size='sm' onClick={() => onEdit(user.id)}>
               Edit
             </Button>
@@ -61,7 +61,7 @@ const UserListItem: React.FC<UserListItemProps> = ({ user, onPromote, onEdit, on
             <Button variant='secondary' size='sm' onClick={() => onDelete(user.id)}>
               Delete
             </Button>
-          )}
+          )} */}
         </div>
       </td>
     </tr>

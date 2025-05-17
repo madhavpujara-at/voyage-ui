@@ -3,15 +3,16 @@ import { useRouter } from 'next/router';
 import AdminLayout from '../../components/layouts/AdminLayout';
 import { useAuth } from '../../contexts/AuthContext';
 import Navigation from '../../components/organisms/Navigation';
+import { UserRole } from '@/features/users/domain/entities/UserRole';
 
 const AnalyticsPage: React.FC = () => {
   const router = useRouter();
-  const { user, isLoading, logout } = useAuth();
+  const { user, loading, logout } = useAuth();
   const [isPageLoading, setIsPageLoading] = useState(true);
 
   useEffect(() => {
     // If authentication is still loading, wait
-    if (isLoading) return;
+    if (loading) return;
 
     // If user is not authenticated, redirect to login
     if (!user) {
@@ -20,15 +21,15 @@ const AnalyticsPage: React.FC = () => {
     }
 
     // If user is not admin or tech_lead, redirect to home
-    if (user.role !== 'admin' && user.role !== 'tech_lead') {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.TECH_LEAD) {
       router.replace('/');
       return;
     }
 
     setIsPageLoading(false);
-  }, [user, isLoading, router]);
+  }, [user, loading, router]);
 
-  if (isLoading || isPageLoading || !user) {
+  if (loading || isPageLoading || !user) {
     return (
       <div className='min-h-screen flex items-center justify-center'>
         <p className='text-gray-500'>Loading...</p>

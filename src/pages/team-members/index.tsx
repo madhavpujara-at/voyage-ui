@@ -5,6 +5,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import Navigation from '../../components/organisms/Navigation';
 import UserListTable from '../../features/users/presentation/components/UserListTable';
 import { User } from '../../features/users/presentation/components/UserListItem';
+import { UserRole } from '@/features/users/domain/entities/UserRole';
 
 // Mock data (in a real app, this would come from an API)
 const mockUsers: User[] = [
@@ -44,7 +45,7 @@ const TeamMembersPage: React.FC = () => {
     }
 
     // If user is not admin, redirect to home
-    if (user.role !== 'admin') {
+    if (user.role !== UserRole.ADMIN) {
       router.replace('/');
       return;
     }

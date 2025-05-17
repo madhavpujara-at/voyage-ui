@@ -3,10 +3,11 @@ import Link from 'next/link';
 import Logo from '../atoms/Logo';
 import Button from '../atoms/Button';
 import { useLogout } from '../../features/auth/presentation/hooks/useLogout';
+import { UserRole } from '@/features/users/domain/entities/UserRole';
 
 interface NavbarProps {
   username?: string;
-  userRole?: 'admin' | 'tech_lead' | 'team_member';
+  userRole?: UserRole;
   onLogout: () => void;
 }
 
@@ -30,7 +31,7 @@ const Navbar: React.FC<NavbarProps> = ({ username, userRole, onLogout }) => {
 
             <div className='hidden sm:ml-6 sm:flex sm:space-x-8'>
               {/* Analytics tab is visible to admin and tech_lead */}
-              {(userRole === 'admin' || userRole === 'tech_lead') && (
+              {(userRole === UserRole.ADMIN || userRole === UserRole.TECH_LEAD) && (
                 <Link href='/analytics'>
                   <a className='inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700'>
                     Analytics
@@ -39,7 +40,7 @@ const Navbar: React.FC<NavbarProps> = ({ username, userRole, onLogout }) => {
               )}
 
               {/* Create Kudos tab is visible to admin and tech_lead */}
-              {(userRole === 'admin' || userRole === 'tech_lead') && (
+              {(userRole === UserRole.ADMIN || userRole === UserRole.TECH_LEAD) && (
                 <Link href='/create-kudos'>
                   <a className='inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700'>
                     Create Kudos
@@ -48,7 +49,7 @@ const Navbar: React.FC<NavbarProps> = ({ username, userRole, onLogout }) => {
               )}
 
               {/* Team Members tab is visible only to admin */}
-              {userRole === 'admin' && (
+              {userRole === UserRole.ADMIN && (
                 <Link href='/team-members'>
                   <a className='inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700'>
                     Team Members
@@ -57,7 +58,7 @@ const Navbar: React.FC<NavbarProps> = ({ username, userRole, onLogout }) => {
               )}
 
               {/* Tech Leads tab is visible only to admin */}
-              {userRole === 'admin' && (
+              {userRole === UserRole.ADMIN && (
                 <Link href='/tech-leads'>
                   <a className='inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700'>
                     Tech Leads

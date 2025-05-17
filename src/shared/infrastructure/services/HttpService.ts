@@ -86,12 +86,12 @@ export class HttpService implements IHttpService {
     return response.json();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private async handleErrorResponse(response: Response): Promise<Error> {
     let errorData: { message?: string } = {};
     try {
       errorData = await response.json();
     } catch (error) {
+      console.error(error);
       errorData = { message: 'Unknown error occurred' };
     }
 

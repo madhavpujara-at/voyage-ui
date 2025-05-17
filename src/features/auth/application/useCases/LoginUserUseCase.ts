@@ -1,7 +1,6 @@
 import { IAuthRepository } from '../../domain/interfaces/IAuthRepository';
 import { LoginUserDto } from '../dtos/LoginUserDto';
 import { LoginUserResponseDto } from '../dtos/LoginUserResponseDto';
-import { AuthMapper } from '../mappers/AuthMapper';
 import { InvalidCredentialsError, UserNotFoundError } from '../../domain/errors/AuthErrors';
 import { IHttpService } from '../../../../shared/infrastructure/interfaces/IHttpService';
 import { IConfigService } from '../../../../shared/infrastructure/interfaces/IConfigService';

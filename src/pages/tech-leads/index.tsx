@@ -5,6 +5,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import Navigation from '../../components/organisms/Navigation';
 import LeadListTable from '../../features/users/presentation/components/LeadListTable';
 import { User } from '../../features/users/presentation/components/UserListItem';
+import { UserRole } from '@/features/users/domain/entities/UserRole';
 
 // Mock data (in a real app, this would come from an API)
 const mockLeads: User[] = [
@@ -30,12 +31,12 @@ const mockLeads: User[] = [
 
 const TechLeadsPage: React.FC = () => {
   const router = useRouter();
-  const { user, isLoading, logout } = useAuth();
+  const { user, loading, logout } = useAuth();
   const [isPageLoading, setIsPageLoading] = useState(true);
 
   useEffect(() => {
     // If authentication is still loading, wait
-    if (isLoading) return;
+    if (loading) return;
 
     // If user is not authenticated, redirect to login
     if (!user) {
@@ -44,15 +45,15 @@ const TechLeadsPage: React.FC = () => {
     }
 
     // If user is not admin, redirect to home
-    if (user.role !== 'admin') {
+    if (user.role !== UserRole.ADMIN) {
       router.replace('/');
       return;
     }
 
     setIsPageLoading(false);
-  }, [user, isLoading, router]);
+  }, [user, loading, router]);
 
-  if (isLoading || isPageLoading || !user) {
+  if (loading || isPageLoading || !user) {
     return (
       <div className='min-h-screen flex items-center justify-center'>
         <p className='text-gray-500'>Loading...</p>

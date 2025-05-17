@@ -1,4 +1,3 @@
-import { LoginUserResponseDto } from '@/features/auth/application/dtos/LoginUserResponseDto';
 import { UserRole } from './UserRole';
 
 export interface UserProps {

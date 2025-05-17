@@ -2,8 +2,6 @@ import { IAuthRepository } from '../../domain/interfaces/IAuthRepository';
 import { LoginUserDto } from '../../application/dtos/LoginUserDto';
 import { RegisterUserRequestDto } from '../../application/dtos/RegisterUserRequestDto';
 import { RegisterUserResponseDto } from '../../application/dtos/RegisterUserResponseDto';
-import { User } from '@/features/users/domain/entities/User';
-import { UserRole } from '@/features/users/domain/entities/UserRole';
 import { InvalidCredentialsError, UserNotFoundError, UserAlreadyExistsError } from '../../domain/errors/AuthErrors';
 import { IHttpService } from '../../../../shared/infrastructure/interfaces/IHttpService';
 import { IConfigService } from '../../../../shared/infrastructure/interfaces/IConfigService';

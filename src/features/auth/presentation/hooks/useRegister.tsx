@@ -24,7 +24,7 @@ export const useRegister = () => {
   const authRepository = new AuthRepositoryImpl(httpService, configService);
   const registerUserUseCase = new RegisterUserUseCase(authRepository);
 
-  const register = async (registerData: RegisterUserRequestDto): Promise<RegisterUserResponseDto> => {
+  const register = async (registerData: RegisterUserRequestDto): Promise<RegisterUserResponseDto | null> => {
     setLoading(true);
     setError(null);
 

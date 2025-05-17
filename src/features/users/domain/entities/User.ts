@@ -1,0 +1,55 @@
+import { UserRole } from './UserRole';
+
+export interface UserProps {
+  id: string;
+  email: string;
+  name: string;
+  role: UserRole;
+}
+
+export class User {
+  private readonly _id: string;
+  private _email: string;
+  private _name: string;
+  private _role: UserRole;
+
+  constructor(props: UserProps) {
+    this._id = props.id;
+    this._email = props.email;
+    this._name = props.name;
+    this._role = props.role;
+  }
+
+  // Getters
+  get id(): string {
+    return this._id;
+  }
+  get email(): string {
+    return this._email;
+  }
+  get name(): string {
+    return this._name;
+  }
+  get role(): UserRole {
+    return this._role;
+  }
+
+  // Factory method
+  public static create(props: { id: string; email: string; name: string; role?: UserRole }): User {
+    return new User({
+      id: props.id,
+      email: props.email,
+      name: props.name,
+      role: props.role || UserRole.TEAM_MEMBER, // Default role for new users
+    });
+  }
+
+  public toPrimitives(): UserProps {
+    return {
+      id: this._id,
+      email: this._email,
+      name: this._name,
+      role: this._role,
+    };
+  }
+}

@@ -126,14 +126,6 @@
 - **5.4. Maintainability:** The code structure should be clean, well-organized, and easy to maintain, adhering to the specified SOPs.
 - **5.5. Reliability:** Core features must be reliable and function as expected.
 
-**6. Optional Enhancements (Brownie Points)**
-
-- **6.1. Basecamp Notifications:**
-  - When a kudo is given, automatically post a small message to a designated Basecamp project.
-- **6.2. User Profiles:**
-  - Each user has a profile page.
-  - The profile page lists the kudos they have received.
-
 **7. Evaluation Criteria (Summary from Hackathon Document)**
 
 - **7.1. Feature Completion (40%):** Core functionalities (create & display kudos, basic auth, analytics) must be finished and demo-ready.

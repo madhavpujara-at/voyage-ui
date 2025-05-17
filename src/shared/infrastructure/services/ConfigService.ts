@@ -8,7 +8,7 @@ export class ConfigService implements IConfigService {
 
   constructor() {
     this.config = {
-      baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://voyage-backend-gd3mz.kinsta.app/api',
+      baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL as string,
       apiPaths: {
         register: '/auth/register',
         login: '/auth/login',

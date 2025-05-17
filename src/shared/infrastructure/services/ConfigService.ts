@@ -7,13 +7,11 @@ export class ConfigService implements IConfigService {
   };
 
   constructor() {
-    // In a real app, these might come from environment variables
     this.config = {
-      baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001/api',
+      baseUrl: 'https://voyage-backend-gd3mz.kinsta.app/api',
       apiPaths: {
         register: '/auth/register',
         login: '/auth/login',
-        // Other API paths if needed
       },
     };
   }

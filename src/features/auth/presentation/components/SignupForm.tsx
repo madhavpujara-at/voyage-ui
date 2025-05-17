@@ -5,18 +5,14 @@ import Button from '@/components/atoms/Button';
 import { useRegister } from '../hooks/useRegister';
 import { useRegisterForm } from '../hooks/useRegisterForm';
 
-interface SignupFormProps {
-  redirectPath?: string;
-}
-
-const SignupForm: React.FC<SignupFormProps> = ({ redirectPath = '/' }) => {
+const SignupForm: React.FC = () => {
   const { register, loading, error: registerError } = useRegister();
 
   const { fields, handleChange, handleSubmit, isSubmitting, generalError } = useRegisterForm({
     onSubmit: async (formData) => {
       return register(formData);
     },
-    redirectPath,
+    redirectPath: '/',
   });
 
   return (

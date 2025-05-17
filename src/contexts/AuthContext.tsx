@@ -40,17 +40,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  // Check if the user is already logged in on mount
   useEffect(() => {
     const checkAuth = () => {
       if (isAuthenticated()) {
         setUser(getUserData());
+      } else {
+        // Don't redirect to login if already on login or signup page
+        const isAuthPage = router.pathname === '/login' || router.pathname === '/signup';
+        if (!isAuthPage) {
+          router.replace('/login');
+        }
       }
       setLoading(false);
     };
 
     checkAuth();
-  }, []);
+  }, [router]);
 
   // Login function
   const login = (authData: AuthData) => {
@@ -58,14 +63,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUser(authData.user);
   };
 
-  // Logout function
   const logout = () => {
     clearAuthData();
     setUser(null);
     router.push('/login');
   };
 
-  // Context value
   const value = {
     user,
     isLoggedIn: !!user,

@@ -1,5 +1,6 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/router';
+import { RegisterUserRequestDto } from '../../application/dtos/RegisterUserRequestDto';
 
 interface FormField {
   value: string;
@@ -13,11 +14,9 @@ interface RegisterFields {
   confirmPassword: FormField;
 }
 
-type RegisterFormData = Omit<Record<keyof RegisterFields, string>, 'confirmPassword'>;
-
 interface UseRegisterFormProps {
   initialFields?: Partial<RegisterFields>;
-  onSubmit: (formData: RegisterFormData) => Promise<unknown>;
+  onSubmit: (formData: RegisterUserRequestDto) => Promise<unknown>;
   redirectPath: string;
 }
 
@@ -73,10 +72,14 @@ export const useRegisterForm = ({ initialFields = {}, onSubmit, redirectPath }: 
       isValid = false;
     }
 
-    // Password validation
-    if (newFields.password.value && newFields.password.value.length < 8) {
-      newFields.password.error = 'Password must be at least 8 characters';
-      isValid = false;
+    // Password validation - match API requirements
+    if (newFields.password.value) {
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      if (!passwordRegex.test(newFields.password.value)) {
+        newFields.password.error =
+          'Password must be at least 8 characters and include uppercase, lowercase, number, and special character';
+        isValid = false;
+      }
     }
 
     // Confirm password validation
@@ -104,16 +107,14 @@ export const useRegisterForm = ({ initialFields = {}, onSubmit, redirectPath }: 
     setGeneralError(null);
 
     try {
-      // Convert fields to raw values for submission and remove confirmPassword
-      const formData = Object.entries(fields).reduce<Record<string, string>>((acc, [key, field]) => {
-        acc[key] = field.value;
-        return acc;
-      }, {});
+      // Create RegisterUserRequestDto from form fields
+      const registerData: RegisterUserRequestDto = {
+        name: fields.name.value,
+        email: fields.email.value,
+        password: fields.password.value,
+      };
 
-      // Remove confirmPassword from the data we send to the API
-      const { confirmPassword, ...registerData } = formData;
-
-      await onSubmit(registerData as RegisterFormData);
+      await onSubmit(registerData);
       router.push(redirectPath);
     } catch (error) {
       console.error('Registration form submission error:', error);

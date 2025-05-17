@@ -30,12 +30,12 @@ const mockUsers: User[] = [
 
 const TeamMembersPage: React.FC = () => {
   const router = useRouter();
-  const { user, isLoading, logout } = useAuth();
+  const { user, loading, logout } = useAuth();
   const [isPageLoading, setIsPageLoading] = useState(true);
 
   useEffect(() => {
     // If authentication is still loading, wait
-    if (isLoading) return;
+    if (loading) return;
 
     // If user is not authenticated, redirect to login
     if (!user) {
@@ -50,9 +50,9 @@ const TeamMembersPage: React.FC = () => {
     }
 
     setIsPageLoading(false);
-  }, [user, isLoading, router]);
+  }, [user, loading, router]);
 
-  if (isLoading || isPageLoading || !user) {
+  if (loading || isPageLoading || !user) {
     return (
       <div className='min-h-screen flex items-center justify-center'>
         <p className='text-gray-500'>Loading...</p>

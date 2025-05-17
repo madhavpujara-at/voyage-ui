@@ -2,39 +2,41 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import FormField from '@/components/molecules/FormField';
 import Button from '@/components/atoms/Button';
+import { LoginUserDto } from '../../application/dtos/LoginUserDto';
 
 interface LoginFormProps {
-  onSubmit: (email: string, password: string) => void;
+  onSubmit: (data: LoginUserDto) => void;
   isLoading?: boolean;
+  error?: string | null;
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, isLoading = false }) => {
+const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, isLoading = false, error = null }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [validationErrors, setValidationErrors] = useState<{ email?: string; password?: string }>({});
 
   const validateForm = (): boolean => {
-    const newErrors: { email?: string; password?: string } = {};
+    const errors: { email?: string; password?: string } = {};
 
     if (!email) {
-      newErrors.email = 'Email is required';
+      errors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Please enter a valid email address';
+      errors.email = 'Please enter a valid email address';
     }
 
     if (!password) {
-      newErrors.password = 'Password is required';
+      errors.password = 'Password is required';
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (validateForm()) {
-      onSubmit(email, password);
+      onSubmit({ email, password });
     }
   };
 
@@ -45,6 +47,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, isLoading = false }) =>
         <p className='mt-2 text-sm text-gray-600'>Enter your credentials to sign in to your account</p>
       </div>
 
+      {error && <div className='mb-4 p-3 rounded bg-red-50 border border-red-200 text-red-600 text-sm'>{error}</div>}
+
       <form onSubmit={handleSubmit}>
         <FormField
           id='email'
@@ -54,7 +58,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, isLoading = false }) =>
           placeholder='name@example.com'
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          error={errors.email}
+          error={validationErrors.email}
           required
         />
 
@@ -65,7 +69,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, isLoading = false }) =>
           label='Password'
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          error={errors.password}
+          error={validationErrors.password}
           required
         />
 

@@ -35,15 +35,11 @@ const mockKudos: Kudos[] = [
   },
 ];
 
-interface HomePageProps {
-  userRole: 'admin' | 'tech_lead' | 'team_member';
-}
-
-const HomePage: React.FC<HomePageProps> = ({ userRole }) => {
-  const { user, logout } = useAuth();
+const HomePage: React.FC = () => {
+  const { logout } = useAuth();
 
   return (
-    <AdminLayout username={user?.name || `${userRole} User`} onLogout={logout}>
+    <AdminLayout onLogout={logout}>
       <div className='mb-6'>
         <h1 className='text-2xl font-bold text-gray-900'>Kudos Wall</h1>
         <p className='text-gray-600'>Celebrate your team&apos;s achievements</p>

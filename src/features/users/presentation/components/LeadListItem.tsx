@@ -33,7 +33,7 @@ const LeadListItem: React.FC<LeadListItemProps> = ({ lead, onDemote, onEdit, onD
               Demote to Team Member
             </Button>
           )}
-          {onEdit && (
+          {/* {onEdit && (
             <Button variant='secondary' size='sm' onClick={() => onEdit(lead.id)}>
               Edit
             </Button>
@@ -42,7 +42,7 @@ const LeadListItem: React.FC<LeadListItemProps> = ({ lead, onDemote, onEdit, onD
             <Button variant='secondary' size='sm' onClick={() => onDelete(lead.id)}>
               Delete
             </Button>
-          )}
+          )} */}
         </div>
       </td>
     </tr>

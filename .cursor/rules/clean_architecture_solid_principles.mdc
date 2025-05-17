@@ -1,0 +1,132 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Development Rules & Guidelines: Clean Architecture & SOLID Principles
+
+This document outlines the rules and guidelines for designing and developing software systems using Clean Architecture and adhering to SOLID principles to create maintainable, scalable, and testable systems.
+
+## I. Clean Architecture: The Dependency Rule is Paramount
+
+The core principle is the **Dependency Rule**: source code dependencies *must only point inwards*. Inner layers must not know anything about outer layers.
+
+### 1. Strictly Inward Dependencies & Layer Adherence:
+*   Code within a specific architectural layer (e.g., `Domain`, `Application`, `Infrastructure`) **must not** `import` or `require` classes/modules from an *outer layer*.
+*   **Allowed Dependencies:**
+    *   `Domain` (Entities, Core Domain Services): Can only depend on other `Domain` elements or language primitives. *No external dependencies.*
+    *   `Application` (Use Cases, Application Service Interfaces, DTOs): Can depend on `Domain`.
+    *   `Infrastructure` (Controllers, DB Repositories, External Service Clients, UI Components): Can depend on `Application` (typically by implementing interfaces defined there) and `Domain`.
+*   **Verification:** Violations of this import rule (e.g., a file in `src/application/use_cases/` importing from `src/infrastructure/web/`) should be flagged in code reviews or by linters.
+
+### 2. Abstractions for Inward-Facing Dependencies:
+*   When an `Application` layer component (e.g., `CreateUserUseCase`) requires functionality from an outer layer (e.g., data persistence):
+    1.  Define an **interface** for that operation within the `Application` layer (e.g., `UserRepositoryInterface`, `EmailServiceInterface`).
+    2.  The `Application` component must depend **only** on this interface.
+    3.  The concrete **implementation** of this interface belongs in the `Infrastructure` layer (e.g., `PostgresUserRepositoryImpl implements UserRepositoryInterface`, `SmtpEmailServiceImpl implements EmailServiceInterface`).
+*   **Example Flow:** `CreateUserUseCase` (Application) calls `userRepository.save(user)` where `userRepository` is an instance of `UserRepositoryInterface`. The actual instance provided at runtime will be `PostgresUserRepositoryImpl` (Infrastructure).
+
+### 3. Data Transfer Objects (DTOs) for Inter-Layer Communication:
+*   For data crossing boundaries between `Infrastructure` (e.g., Controllers, Presenters) and `Application` (Use Cases):
+    *   **Incoming Data (e.g., Controller to Use Case):** Use plain, immutable DTOs defined in the `Application` layer (e.g., `CreateUserRequestDTO`). Controllers are responsible for validating raw input (e.g., HTTP request body) and mapping it to this DTO.
+    *   **Outgoing Data (e.g., Use Case to Presenter/Controller):** Use Cases should return `Domain` Entities or plain, immutable DTOs defined in the `Application` layer (e.g., `UserResponseDTO`). Presenters/Controllers in `Infrastructure` map this DTO/Entity to the specific output format (e.g., JSON response).
+*   **Guideline:** Avoid passing raw HTTP request/response objects, database ORM entities with active record patterns, or framework-specific classes directly as arguments to or returned from `Use Case` methods.
+
+### 4. Entities: Pure Business Logic & State:
+*   `Domain` Entities (e.g., `Order`, `Product`):
+    *   **Content:** Must only contain attributes (fields/properties) that define the entity\'s state and methods that implement core, universal business rules or calculations intrinsic to that entity (e.g., `Order.addItem()`, `Product.isValidSku()`, `Order.calculateTotal()`).
+    *   **Purity:** Must be **strictly free** of code related to:
+        *   Database persistence (e.g., ORM annotations like `@Entity`, methods like `save()`, `delete()`).
+        *   Framework specifics (e.g., web framework base classes, serialization annotations for a specific library).
+        *   UI concerns.
+        *   Network communication.
+    *   **Testability:** Must be instantiable and testable with no external dependencies other than potentially other `Domain` entities or value objects.
+
+### 5. Use Cases: Application-Specific Workflow Orchestration:
+*   `Application` Use Cases (e.g., `SubmitOrderUseCase`):
+    *   **Structure:** Typically, a Use Case class will have one public method representing the operation (e.g., `execute(SubmitOrderCommand)` or `handle(OrderRequestDTO)`).
+    *   **Responsibilities:**
+        1.  Accept input data via a DTO or command object.
+        2.  Retrieve `Domain` Entities using `Repository Interfaces`.
+        3.  Invoke methods on `Domain` Entities to perform business logic.
+        4.  Use `Repository Interfaces` to persist changes to `Domain` Entities.
+        5.  Return output data via a DTO or `Domain` Entity.
+    *   **Prohibitions:** Use Cases **must not** contain:
+        *   Direct database access code (SQL, ORM direct calls).
+        *   HTTP handling logic.
+        *   UI manipulation code.
+        *   Knowledge of specific concrete implementations from the `Infrastructure` layer. They interact **only** via interfaces defined in the `Application` layer.
+
+### 6. Frameworks & Drivers: The Outermost Layer (Plugins):
+*   The `Infrastructure` layer (e.g., web controllers, database repository implementations, external API clients):
+    *   **Implementation Role:** Provides concrete implementations for interfaces defined in the `Application` layer (e.g., `ExpressOrderController` calls `SubmitOrderUseCase`; `MongoDbProductRepository` implements `ProductRepositoryInterface`).
+    *   **Framework Usage:** This is the **only** layer where framework-specific code, libraries, and annotations are permitted (e.g., Spring `@RestController`, Express route handlers, SQLAlchemy models, AWS SDK calls).
+    *   **Goal:** The `Domain` and `Application` layers should remain unchanged if a framework or driver in this layer is replaced (e.g., swapping `PostgreSQL` for `MongoDB`, or `Express.js` for `FastAPI`).
+
+## II. SOLID Principles: Guidelines for Robust Code
+
+### 7. S - Single Responsibility Principle (SRP):
+*   A class/module should have **one, and only one, reason to change**.
+*   Consider which "actor" (e.g., a user role, an external system, a specific business process) is served by the class. A class should ideally serve only one actor\'s needs regarding a specific responsibility.
+*   **Example:** If a `ReportService` has requirements for "generating report data," "formatting report to PDF," and "emailing the report," it should be refactored into distinct classes: `ReportDataGenerator`, `ReportPdfFormatter`, `ReportEmailSender`.
+
+### 8. O - Open/Closed Principle (OCP):
+*   Software entities should be **open for extension, but closed for modification**.
+*   When a requirement involves extending existing functionality, prefer adding new classes that implement existing interfaces or extend existing abstract classes, rather than modifying existing, tested code.
+*   Employ design patterns like Strategy, Decorator, or Template Method to facilitate this.
+*   **Example:** If an `NotificationService` exists with an interface `INotifier` and an `EmailNotifier` implementation, and a new requirement is to add SMS notifications, create a new `SmsNotifier implements INotifier` class. The `NotificationService` would then be configured (via DI) to use the appropriate `INotifier` instance.
+
+### 9. L - Liskov Substitution Principle (LSP):
+*   Subtypes **must be substitutable for their base types** without altering the correctness of the program.
+*   A subclass must honor the contract of its superclass/interface. This includes:
+    *   Compatible method signatures.
+    *   Preconditions not stronger than in the superclass.
+    *   Postconditions not weaker than in the superclass.
+    *   Maintenance of superclass invariants.
+    *   Not throwing new exception types not declared by the superclass method\'s signature (unless idiomatic for unchecked exceptions).
+*   **Example:** If a `File` base class has `read()` and `write()` methods, a `ReadOnlyFile` subclass should not throw an `UnsupportedOperationException` for `write()` if `File`\'s contract implies `write()` is always supported (consider if `File` should have optional `write` or use a more specific `ReadableFile` interface).
+
+### 10. I - Interface Segregation Principle (ISP):
+*   Clients **should not be forced to depend on methods they do not use**.
+*   Define interfaces tailored to the needs of their clients. Group methods into interfaces based on high cohesion.
+*   Avoid "fat" interfaces. If a class implements an interface but leaves many methods unimplemented, the interface is likely too broad and should be split into smaller, more specific interfaces.
+*   **Example:** Instead of `IMachine { print(); scan(); fax(); staple(); }`, if a `SimplePrinter` only needs `print()`, define an `IPrintable { print(); }`. `SimplePrinter` implements `IPrintable`. A `MultiFunctionPrinter` might implement `IPrintable`, `IScannable`, `IFaxable`.
+
+### 11. D - Dependency Inversion Principle (DIP):
+*   High-level modules **should not depend on low-level modules**. Both should depend on **abstractions** (e.g., interfaces).
+*   Abstractions **should not depend on details**. Details (concrete implementations) **should depend on abstractions**.
+*   This is achieved by defining interfaces in the inner/higher layers and implementing them in outer/lower layers, with Dependency Injection wiring them together.
+*   **Example:** A `UserAuthenticationService` (Application) should depend on an `IUserRepository` interface (Application), not directly on `MySqlUserRepository` (Infrastructure). `MySqlUserRepository` implements `IUserRepository`.
+
+## III. Practical Implementation & Testing Guidelines
+
+### 12. Isolating Logic for Testing:
+*   **Domain Entities:** Test by direct instantiation and calling business logic methods. Assert outcomes without any mocking.
+*   **Application Use Cases:** Test by instantiating the Use Case. For every dependency defined by an interface (e.g., `IRepository`, `IService`), use a mock/stub implementation. Configure mocks to return specific data or verify method calls. Assert the Use Case\'s output or interaction with mocks.
+*   **Infrastructure (Controllers/Gateways):**
+    *   **Controllers:** Test by simulating incoming requests (e.g., HTTP). Mock the `Use Case` layer. Assert correct input parsing, invocation of the appropriate `Use Case` with mapped data, and correct formatting of the `Use Case`\'s output into a response.
+    *   **Repositories:** Write *integration tests* that interact with a test instance of the actual database or external service to verify data persistence and retrieval logic.
+
+### 13. Dependency Injection (DI) Usage:
+*   **Constructor Injection:** Prefer injecting dependencies (abstractions/interfaces) via the constructor.
+*   **Composition Root:** Establish a "Composition Root" (e.g., in `main.ts`, `Program.cs`, or a dedicated DI configuration module). This is where concrete implementations from `Infrastructure` are instantiated and provided to `Application` layer services/use cases.
+*   **Framework DI:** If a specific DI framework is in use (e.g., Spring, NestJS, .NET Core DI), use its mechanisms for service registration and injection.
+
+### 14. Promoting Immutability:
+*   For Entities, DTOs, and Value Objects:
+    *   Use `readonly`/`final` fields where the language supports it.
+    *   Initialize all state via the constructor.
+    *   Avoid public setter methods.
+    *   If an object needs to be "modified," provide methods that return a *new instance* of the object with the updated value(s) (e.g., `product.withPrice(newPrice)` returns a new `Product` instance).
+
+### 15. Structured Error Handling Strategy:
+*   **Domain/Application Errors:** Define custom, domain-specific exception classes or result/either types within the `Domain` or `Application` layers (e.g., `OrderNotFoundException`, `InsufficientStockError`). Use Cases should throw/return these.
+*   **Infrastructure Error Mapping:** In the `Infrastructure` layer (e.g., Controllers), catch domain/application exceptions from Use Cases and map them to appropriate protocol-specific responses (e.g., `OrderNotFoundException` -> HTTP 404, `ValidationException` -> HTTP 400).
+*   **Avoid Leaking Low-Level Exceptions:** Prevent raw database exceptions (`SQLException`), network exceptions, or other `Infrastructure`-specific exceptions from propagating into `Application` or `Domain` layers. If caught in `Infrastructure`, they should be handled or wrapped in more abstract exceptions defined by `Application`.
+
+### 16. Architectural Adherence: Code Reviews & Linters:
+*   During code reviews and with automated linters, actively check for:
+    *   **Import Validation:** Adherence to the Dependency Rule (no outer layer imports in inner layers).
+    *   **Interface Usage:** Correct use of DI; no direct instantiation of concrete `Infrastructure` classes within `Application` or `Domain` layers where an interface should be injected.
+    *   **SRP Violations:** Classes with a high number of methods or diverse method concerns.
+    *   **ISP Violations:** Classes implementing interfaces but leaving many methods empty or throwing `NotImplementedException`.

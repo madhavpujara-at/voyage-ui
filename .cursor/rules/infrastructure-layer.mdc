@@ -1,0 +1,49 @@
+---
+description: You should use the infrastructure-layer rule when: Implementing Data Persistence: When you are writing the actual code that saves to and retrieves data from a database, a third-party API, local storage, or any other storage mechanism. This typically involves creating repository implementations that fulfill contracts (interfaces) defined in the domain layer. Communicating with External Services: When you need to build clients or services to interact with external APIs or other systems (e.g., payment gateways, notification services, external data providers). Handling Caching: When implementing caching logic to improve performance, whether it's in-memory, distributed, or using a dedicated caching service. Managing Data Serialization/Deserialization: When you need to convert data to and from formats suitable for external communication (e.g., JSON for an API) or storage. Dealing with specific platform/framework concerns: When your code needs to interact directly with platform-specific details or external libraries that are not part of your core business logic (e.g., file system access, network requests). Creating shared infrastructure components: When developing utilities or services that are used across multiple features for infrastructure-level concerns (like a shared caching utility or a generic HTTP client wrapper).
+globs: 
+alwaysApply: false
+---
+# Infrastructure Layer
+
+## Structure
+
+product/infrastructure/
+├── api/                        # API clients (if require)
+│   ├── ProductApiClient.ts     # Handles communication with external product-related APIs
+│   └── ProductApiClient.test.ts
+└── repositories/               # Data access implementations (e.g., UserApiRepository.ts)
+    ├── ProductRepository.ts    # Implements I[RepositoryName].ts from domain layer
+    └── ProductRepository.test.ts
+
+Shared infrastructure components:
+
+shared/infrastructure/
+└── cache/                  # Shared caching implementations
+    ├── InMemoryCache.ts    # Simple in-memory cache utility
+
+## Rules
+   - Provide persistence mechanisms
+   - Be shared across features when appropriate
+   - Handle caching if needed
+   - Manage data serialization/deserialization
+
+## Example Repository
+
+```typescript
+export class ListingRepositoryImpl implements IListingRepository {
+	constructor(private httpClient: IHttpService, private configService: IConfigService) {}
+
+	async getListingsCount(filterDetails: IListingSrData): Promise<TFilterCountDetails> {
+		try {
+			return this.httpClient.post<any>({
+				path: this.configService.getApiPaths().filterResultsSummary,
+				body: filterDetails
+			});
+		} catch (error) {
+			throw error;
+		}
+	}
+}
+```
+
+## Example API Client

@@ -1,0 +1,131 @@
+---
+description: This rule defines the structure and responsibilities of the Application Layer in your codebase, which acts as an intermediary between the presentation (UI) and domain (core business logic) layers. You should use this rule when: Developing new features: Ensure new features adhere to this layered architecture by placing use cases, DTOs, mappers, and commands in their designated application subdirectories within the feature's main folder. Refactoring existing code: If you're restructuring parts of the application, apply this rule to align the code with the defined architecture. This helps in separating concerns and improving maintainability. Handling data flow: When data needs to move between the UI/external services and the core business logic, use DTOs for data transfer, mappers for transforming data between layers, and use cases to orchestrate these operations. Defining business operations: Implement specific business workflows or user-initiated actions as Use Cases. Creating data contracts for actions: Use Commands to define the data required to trigger specific application actions. In essence, this rule should be consulted whenever you are working with or designing the part of your application that orchestrates interactions, transforms data for different concerns, and encapsulates application-specific logic without containing core business rules (which belong in the domain layer).
+globs: 
+alwaysApply: false
+---
+# Application Layer
+
+The Application Layer orchestrates the flow of data between the presentation and domain layers, containing DTOs, mappers, and use cases.
+
+## Structure
+
+
+feature_name
+├── application       # Use cases, DTOs, mappers, and commands for this feature
+│   ├── dtos/         # Data Transfer Objects (e.g., CreateUserDto.ts)
+│   │   └── [DtoName].ts
+│   ├── mappers/      # Maps between domain entities and DTOs (e.g., UserMapper.ts)
+│   │   └── [EntityName]Mapper.ts
+│   ├── useCases/     # Business logic operations/workflows (e.g., CreateUserUseCase.ts)
+│   │   └── [UseCaseName].ts
+│   └── commands/     # Command definitions (e.g., CreateProductCommand.ts)
+         └── [CommandName].ts
+
+## Rules
+
+1. **DTOs (Data Transfer Objects)** should:
+- Data Transfer Only: Simple objects for moving data between layers.
+- No Business Logic: Absolutely no business rules or complex behavior.
+- Properties Only: Primarily consist of data fields.
+- Immutable (Preferred): Favor immutability for safer data transfer.
+- Basic Validation: Can handle initial input validation.
+- Use-Case Specific: Tailored for specific operations or views.
+- Clear Naming: Names should reflect purpose (e.g., CreateUserDto).
+
+2. **Mappers** should:
+- Data Transformation: Convert objects between types (e.g., Domain Entity <-> DTO).
+- No Business Logic: Strictly for mapping, no business rules.
+- Stateless: Operate on input, produce output, without internal state.
+- Decoupling: Isolate mapping logic, reducing coupling between layers.
+- Clear Naming: Indicate source and target (e.g., UserEntityToDtoMapper).
+- Dependency: Typically used within the application layer by use cases.
+
+3. **Use Cases** should:
+- Single Responsibility: Each use case should address one specific business operation or user goal.
+- Orchestration: Coordinates domain entities, repositories, and other services.
+- Input/Output with DTOs: Accepts DTOs as input and returns DTOs or simple results.
+- Application Logic Only: Contains application-specific logic (e.g., transaction management, notifications) but not core domain rules.
+- Framework Agnostic: Independent of UI or specific delivery mechanisms.
+- Clear Naming: Name should clearly indicate the action or goal (e.g., `SubmitOrderUseCase`).
+- Idempotency : For commands, consider if the use case can be designed to be idempotent.
+
+4. **Commands** should:
+Single Responsibility: Each command triggers one specific application action.
+Data Carrier: Commands hold only the data needed for an action.
+Immutable: Command data should not change after creation.
+Clearly Defined Contract: Properties define the exact input for an operation.
+Naming Clarity: Name commands with a clear Verb-Noun pattern (e.g., SubmitOrderCommand).
+
+## Example DTO
+
+```typescript
+export class CreateUserDto {
+  readonly email: string;
+  readonly name: string;
+  // Basic validation might be here (e.g., using class-validator decorators)
+}
+```
+
+## Example Mapper
+
+```typescript
+import { User } from '../../domain/entities/User'; // Assuming User entity path
+import { UserResponseDto } from '../dtos/UserResponseDto'; // Assuming DTO path
+
+export class UserMapper {
+  static toDto(entity: User): UserResponseDto {
+    return {
+      id: entity.id,
+      email: entity.email,
+      name: entity.name,
+      // Map other relevant fields
+    };
+  }
+}
+```
+
+## Example Use Case
+
+```typescript
+import { Product } from '../../domain/entities/Product';
+import { IProductRepository } from '../../domain/interfaces/IProductRepository'; // Domain layer interface
+import { CreateProductDto } from '../dtos/CreateProductDto';
+import { ProductResponseDto } from '../dtos/ProductResponseDto';
+import { ProductMapper } from '../mappers/ProductMapper';
+// Potentially import other services like a notification service if needed
+
+export class CreateProductUseCase {
+  constructor(
+    private readonly productRepository: IProductRepository // Injected dependency
+  ) {}
+
+  async execute(command: CreateProductDto): Promise<ProductResponseDto> {
+    // 1. Validate input DTO (basic validation might already be on DTO)
+    // More complex application-level validation can happen here.
+    if (createProductDto.price <= 0) {
+      throw new Error('Product price must be positive.'); // Or a specific ApplicationError
+    }
+
+    // 2. Check for business rule violations (e.g., product name uniqueness if required)
+    const existingProduct = await this.productRepository.findByName(createProductDto.name);
+    if (existingProduct) {
+      throw new Error(`Product with name "${createProductDto.name}" already exists.`);
+    }
+
+    // 3. Create domain entity
+    const productEntity = Product.create( // Assuming a static factory method on the Product entity
+      createProductDto.name,
+      createProductDto.description,
+      createProductDto.price,
+      createProductDto.stock
+    );
+
+    // 4. Persist entity using the repository
+    const savedProduct = await this.productRepository.save(productEntity);
+
+    return ProductMapper.toDto(savedProduct);
+  }
+}
+```
+
+

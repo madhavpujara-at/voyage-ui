@@ -1,0 +1,125 @@
+---
+description: You should use the folder-structure rule when: Creating a new feature: To understand where to place the different parts of your feature (domain logic, application services, infrastructure, UI components) according to the defined layered architecture. Adding new files/modules: To ensure new code is placed in the correct directory based on its responsibility (e.g., adding a new global utility, a shared UI component, or a feature-specific hook). Refactoring existing code: When restructuring parts of the application, this rule helps align the code with the established directory structure and separation of concerns. Understanding the project layout: As a map to navigate the codebase and quickly find different types of files or modules. Setting up routes or API endpoints: To see how pages and API routes are organized, especially within the src/pages/ directory for Next.js applications. Managing static assets: To know where to put files like images, fonts, etc. (public/ directory). Working with global state or shared components: To identify where global contexts (src/contexts/) or globally shared UI components (src/components/) are located or should be added. Ensuring consistent architecture: To maintain a standardized structure across the entire project, making it easier for team members to collaborate and understand the codebase. Reviewing code: To check if new contributions adhere to the established project organization.
+globs: 
+alwaysApply: false
+---
+├── public/                     # Static assets (images, fonts, favicons)
+│   └── ...                     # e.g., images/, fonts/
+├── src/
+│   ├── components/             # GLOBAL/SHARED UI components (reusable across features)
+│   │   ├── atoms/              # Basic building blocks (e.g., Button.tsx, Input.tsx)
+│   │   ├── molecules/          # Combinations of atoms (e.g., SearchBar.tsx)
+│   │   ├── organisms/          # Complex UI parts (e.g., Header.tsx, Footer.tsx, GenericForm.tsx)
+│   │   └── layouts/            # Page layout components (e.g., MainLayout.tsx, AuthLayout.tsx)
+│   │
+│   ├── contexts/               # GLOBAL React Context API providers and related custom hooks
+│   │   ├── AuthContext.tsx     # Example: Manages auth state & functions
+│   │   └── AppStateContext.tsx # Example: Manages other global app state
+│   │   └── ...                 # Other global contexts
+│   │
+│   ├── features/               # Core feature modules
+│   │   │
+│   │   └── [featureName]/      # Replace [featureName] with actual feature (e.g., users, products, orders)
+│   │       │
+│   │       ├── domain/         # Core business logic, entities, interfaces for this feature
+│   │       │   ├── entities/     # Business objects/models (e.g., User.ts, Product.ts)
+│   │       │   │   └── [EntityName].ts
+│   │       │   │   └── [EntityName].test.ts
+│   │       │   ├── interfaces/   # Contracts for repositories or services (e.g., IUserRepository.ts)
+│   │       │   │   └── I[RepositoryName].ts 
+│   │       │   └── errors/       # Custom domain-specific errors (e.g., UserNotFoundError.ts)
+│   │       │       └── [DomainErrorName].ts
+│   │       │
+│   │       ├── application/    # Use cases, DTOs, mappers for this feature
+│   │       │   ├── dtos/         # Data Transfer Objects (e.g., CreateUserDto.ts)
+│   │       │   │   └── [DtoName].ts
+│   │       │   ├── mappers/      # Maps between domain entities and DTOs (e.g., UserMapper.ts)
+│   │       │   │   └── [EntityName]Mapper.ts
+│   │       │   └── useCases/     # Business logic operations/workflows (e.g., CreateUserUseCase.ts)
+│   │       │       └── [UseCaseName].ts
+│   │       │
+│   │       ├── infrastructure/ # Implementation of domain interfaces (API clients, actual repositories)
+│   │       │   ├── api/          # API client specific to this feature's external services (if any)
+│   │       │   │   └── [FeatureName]ApiClient.ts 
+│   │       │   └── repositories/ # Data access implementations (e.g., UserApiRepository.ts)
+│   │       │       └── [RepositoryName].ts # Implements I[RepositoryName].ts from domain layer
+│   │       │
+│   │       └── presentation/   # Feature-specific UI components, hooks, and pages/views
+│   │           ├── components/   # UI components used only within this feature
+│   │           │   └── [FeatureSpecificComponent].tsx
+│   │           ├── hooks/        # React hooks specific to this feature's UI
+│   │           │   └── use[FeatureSpecificLogic].ts
+│   │           └── utils/        # UI utility functions specific to this feature
+│   │
+│   ├── lib/                    # GLOBAL utility functions, constants, configurations
+│   │   ├── utils/              # General helper functions (e.g., stringUtils.ts, dateUtils.ts)
+│   │   ├── constants/          # Application-wide constants (e.g., apiEndpoints.ts, appConfig.ts)
+│   │   └── config/             # Configuration files (e.g., api.ts for base API setup)
+│   │
+│   ├── pages/                  # Next.js Pages Router (defines application routes)
+│   │   ├── _app.tsx            # Main app component (global styles, context providers)
+│   │   ├── _document.tsx       # Custom HTML document structure
+│   │   ├── index.tsx           # Landing page / home page
+│   │   ├── [featureName]/      # Pages related to a specific feature
+│   │   │   ├── index.tsx       # e.g., /users page (list view)
+│   │   │   └── [id].tsx        # e.g., /users/[userId] page (detail view)
+│   │   │   └── new.tsx         # e.g., /users/new page (creation form)
+│   │   └── ...                 # Other top-level pages (e.g., login.tsx, signup.tsx)
+│   │   │
+│   │   └── api/                # Next.js API routes (backend endpoints)
+│   │       │
+│   │       └── [featureName]/  # API routes grouped by feature
+│   │           ├── index.ts    # e.g., POST /api/users (create), GET /api/users (list)
+│   │           └── [id].ts     # e.g., GET /api/users/[id], PUT /api/users/[id], DELETE /api/users/[id]
+│   │       └── auth/           # Example auth routes
+│   │           ├── login.ts
+│   │           ├── signup.ts
+│   │           └── me.ts
+│   │
+│   └── styles/                 # Global styles, theme configuration
+│       ├── globals.css         # Or .scss, .less, etc. for global stylesheets
+│       └── theme.ts            # Optional: Theme object for styling libraries
+│
+├── .eslintrc.json              # ESLint configuration
+├── .gitignore
+├── .prettierrc.json            # Prettier configuration
+├── next.config.js              # Next.js configuration
+├── package.json
+├── tsconfig.json               # TypeScript configuration
+└── README.md                   # Project documentation
+
+## Layer Responsibilities
+
+### Domain Layer
+- core business entities and interfaces
+- Flat structure organized by entity
+- No dependencies on other layers
+- Pure TypeScript/JavaScript
+- Interface definitions (contracts)
+- Domain-specific validation
+
+### Application Layer
+- Depends only on domain layer
+- Use cases that orchestrate domain entities
+- DTOs for input/output boundaries
+- Mappers between domain and DTOs
+- Business operation workflows
+- Independent of UI/infrastructure details
+
+### Infrastructure Layer
+- Implementation of domain interfaces
+- External API clients
+- Repository implementations
+- Storage mechanisms
+
+### Presentation Layer
+
+- React components and UI logic
+- Organized by features and component types
+- Feature-specific components in features folder
+- Reusable components in shared folder
+- No direct infrastructure dependencies
+
+## Dependency Flow
+
+Domain <- Application <- Infrastructure <- Presentation

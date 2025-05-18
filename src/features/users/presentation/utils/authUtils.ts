@@ -1,4 +1,4 @@
-import { UserRole } from '../../domain/entities/UserRole';
+import { UserRole } from '@/features/userManagement/domain/entities/User';
 
 // User data interface
 export interface AuthUserData {

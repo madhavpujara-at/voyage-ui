@@ -12,6 +12,7 @@ export class ConfigService implements IConfigService {
       apiPaths: {
         register: '/auth/register',
         login: '/auth/login',
+        users: '/users',
       },
     };
   }

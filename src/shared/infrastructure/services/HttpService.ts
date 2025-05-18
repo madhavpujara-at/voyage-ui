@@ -86,6 +86,21 @@ export class HttpService implements IHttpService {
     return response.json();
   }
 
+  async patch<T>(options: IHttpRequestOptions): Promise<T> {
+    const { path, body, headers } = options;
+    const response = await fetch(`${this.baseUrl}${path}`, {
+      method: 'PATCH',
+      headers: this.getHeaders(headers),
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      throw await this.handleErrorResponse(response);
+    }
+
+    return response.json();
+  }
+
   private async handleErrorResponse(response: Response): Promise<Error> {
     let errorData: { message?: string } = {};
     try {

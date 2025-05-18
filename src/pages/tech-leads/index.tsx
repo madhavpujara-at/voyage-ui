@@ -3,9 +3,10 @@ import { useRouter } from 'next/router';
 import AdminLayout from '../../components/layouts/AdminLayout';
 import { useAuth } from '../../contexts/AuthContext';
 import Navigation from '../../components/organisms/Navigation';
-import LeadListTable from '../../features/users/presentation/components/LeadListTable';
-import { User } from '../../features/users/presentation/components/UserListItem';
+
+import { User } from '../../features/userManagement/presentation/components/UserListItem';
 import { UserRole } from '@/features/users/domain/entities/UserRole';
+import UserListTable from '@/features/userManagement/presentation/components/UserListTable';
 
 // Mock data (in a real app, this would come from an API)
 const mockLeads: User[] = [
@@ -13,19 +14,19 @@ const mockLeads: User[] = [
     id: '1',
     name: 'Bob Wilson',
     email: 'bob.wilson@example.com',
-    role: 'tech_lead',
+    role: UserRole.TECH_LEAD,
   },
   {
     id: '2',
     name: 'Emma Johnson',
     email: 'emma.johnson@example.com',
-    role: 'tech_lead',
+    role: UserRole.TECH_LEAD,
   },
   {
     id: '3',
     name: 'Michael Thompson',
     email: 'michael.thompson@example.com',
-    role: 'tech_lead',
+    role: UserRole.TECH_LEAD,
   },
 ];
 
@@ -81,11 +82,11 @@ const TechLeadsPage: React.FC = () => {
         </div> */}
 
         <div className='bg-white shadow overflow-hidden sm:rounded-lg'>
-          <LeadListTable
-            leads={mockLeads}
-            onDemote={(leadId) => console.log(`Demoting lead ${leadId}`)}
-            onEdit={(leadId) => console.log(`Editing lead ${leadId}`)}
-            onDelete={(leadId) => console.log(`Deleting lead ${leadId}`)}
+          <UserListTable
+            users={mockLeads}
+            onPromote={(userId) => console.log(`Promoting user ${userId}`)}
+            onEdit={(userId) => console.log(`Editing user ${userId}`)}
+            onDelete={(userId) => console.log(`Deleting user ${userId}`)}
           />
         </div>
       </div>

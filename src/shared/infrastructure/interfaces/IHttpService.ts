@@ -9,4 +9,5 @@ export interface IHttpService {
   post<T>(options: IHttpRequestOptions): Promise<T>;
   put<T>(options: IHttpRequestOptions): Promise<T>;
   delete<T>(options: Omit<IHttpRequestOptions, 'body'>): Promise<T>;
+  patch<T>(options: IHttpRequestOptions): Promise<T>;
 }

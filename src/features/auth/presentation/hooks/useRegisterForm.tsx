@@ -114,11 +114,16 @@ export const useRegisterForm = ({ initialFields = {}, onSubmit, redirectPath }: 
         password: fields.password.value,
       };
 
-      await onSubmit(registerData);
-      router.push(redirectPath);
+      const result = await onSubmit(registerData);
+
+      // Only redirect on successful registration (when we have a result)
+      if (result) {
+        router.push(redirectPath);
+      }
     } catch (error) {
       console.error('Registration form submission error:', error);
       setGeneralError(error instanceof Error ? error.message : 'An unexpected error occurred');
+      // Stay on the current page when there's an error - don't redirect
     } finally {
       setIsSubmitting(false);
     }

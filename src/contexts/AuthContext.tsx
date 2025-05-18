@@ -16,6 +16,7 @@ interface AuthContextType {
   login: (authData: AuthData) => void;
   logout: () => void;
   loading: boolean;
+  setIsAuthError: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 // Create the auth context with a default value
@@ -25,6 +26,7 @@ const AuthContext = createContext<AuthContextType>({
   login: () => {},
   logout: () => {},
   loading: true,
+  setIsAuthError: () => {},
 });
 
 // Export a hook for easy usage of the auth context
@@ -39,15 +41,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<AuthUserData | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  // New state to track if we're in an error state during auth operations
+  const [isAuthError, setIsAuthError] = useState(false);
 
   useEffect(() => {
     const checkAuth = () => {
       if (isAuthenticated()) {
         setUser(getUserData());
+        setIsAuthError(false);
       } else {
-        // Don't redirect to login if already on login or signup page
+        // Don't redirect to login if already on login or signup page or if in an error state
         const isAuthPage = router.pathname === '/login' || router.pathname === '/signup';
-        if (!isAuthPage) {
+        if (!isAuthPage && !isAuthError) {
           router.replace('/login');
         }
       }
@@ -55,17 +60,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     checkAuth();
-  }, [router]);
+  }, [router, isAuthError]);
 
   // Login function
   const login = (authData: AuthData) => {
     saveAuthData(authData);
     setUser(authData.user);
+    setIsAuthError(false);
   };
 
   const logout = () => {
     clearAuthData();
     setUser(null);
+    setIsAuthError(false);
     router.push('/login');
   };
 
@@ -75,6 +82,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     login,
     logout,
     loading,
+    setIsAuthError, // Expose this to allow components to signal auth errors
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

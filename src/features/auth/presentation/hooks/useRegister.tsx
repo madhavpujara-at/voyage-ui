@@ -13,7 +13,7 @@ import { RegisterUserResponseDto } from '../../application/dtos/RegisterUserResp
 export const useRegister = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { login } = useAuth();
+  const { login, setIsAuthError } = useAuth();
 
   // Create instances of required services
   const configService = new ConfigService();
@@ -24,7 +24,9 @@ export const useRegister = () => {
   const authRepository = new AuthRepositoryImpl(httpService, configService);
   const registerUserUseCase = new RegisterUserUseCase(authRepository);
 
-  const register = async (registerData: RegisterUserRequestDto): Promise<RegisterUserResponseDto | null> => {
+  const register = async (
+    registerData: RegisterUserRequestDto
+  ): Promise<RegisterUserResponseDto | null> => {
     setLoading(true);
     setError(null);
 
@@ -33,6 +35,7 @@ export const useRegister = () => {
 
       // Save the token from the API response
       sessionStorageService.saveToken(result?.data?.token);
+
       // Auto-login the user after successful registration
       login({
         token: result?.data?.token,
@@ -46,6 +49,9 @@ export const useRegister = () => {
 
       return result;
     } catch (err) {
+      // Signal that we're in an auth error state to prevent redirects
+      setIsAuthError(true);
+
       if (err instanceof UserAlreadyExistsError) {
         setError(`User with email ${registerData.email} already exists`);
       } else {

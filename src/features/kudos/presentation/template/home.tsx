@@ -1,52 +1,44 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import Link from 'next/link';
 import AdminLayout from '../../../../components/layouts/AdminLayout';
 import KudosList from '../components/KudosList';
-import { Kudos } from '../components/KudosList';
 import { useAuth } from '../../../../contexts/AuthContext';
-
-const mockKudos: Kudos[] = [
-  {
-    id: '1',
-    recipient: 'Jane Smith',
-    team: 'Infra',
-    category: 'Brilliant Idea',
-    message:
-      'Jane implemented a brilliant solution that improved our system performance by 40%. Her innovative approach saved us weeks of work!',
-    from: {
-      name: 'Michael Johnson',
-      date: 'May 10, 2023',
-    },
-    likes: 3,
-    comments: 2,
-  },
-  {
-    id: '2',
-    recipient: 'David Lee',
-    team: 'UI',
-    category: 'Great Teamwork',
-    message:
-      'David went out of his way to help our team meet the deadline. He stayed late and provided valuable insights that made the project successful.',
-    from: {
-      name: 'Sarah Williams',
-      date: 'May 8, 2023',
-    },
-    likes: 2,
-    comments: 1,
-  },
-];
+import { useKudosCardList } from '../hooks/useKudosCardList';
 
 const HomePage: React.FC = () => {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
+  const authorId = user?.id || ''; // Get user ID from auth context
+
+  // Use our hook to fetch and manage kudos
+  const { kudos, isLoadingList, listError, fetchKudos } = useKudosCardList(authorId);
+
+  // Fetch kudos when the component mounts
+  useEffect(() => {
+    fetchKudos();
+  }, [fetchKudos]);
 
   return (
     <AdminLayout onLogout={logout}>
-      <div className='mb-6'>
-        <h1 className='text-2xl font-bold text-gray-900'>Kudos Wall</h1>
-        <p className='text-gray-600'>Celebrate your team&apos;s achievements</p>
+      <div className='mb-6 flex justify-between items-center'>
+        <div>
+          <h1 className='text-2xl font-bold text-gray-900'>Kudos Wall</h1>
+          <p className='text-gray-600'>Celebrate your team&apos;s achievements</p>
+        </div>
+        <Link href='/create-kudos' className='bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700'>
+          Create Kudo Card
+        </Link>
       </div>
 
+      {listError && <div className='mb-4 p-4 bg-red-100 text-red-700 rounded'>Error loading kudos: {listError}</div>}
+
       <div className='py-6'>
-        <KudosList kudos={mockKudos} />
+        {isLoadingList ? (
+          <div className='text-center py-10'>
+            <p className='text-gray-500'>Loading kudos...</p>
+          </div>
+        ) : (
+          <KudosList kudos={kudos} />
+        )}
       </div>
     </AdminLayout>
   );

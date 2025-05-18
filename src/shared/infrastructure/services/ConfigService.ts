@@ -13,6 +13,7 @@ export class ConfigService implements IConfigService {
         register: '/auth/register',
         login: '/auth/login',
         users: '/users',
+        kudoCards: '/kudoCards',
       },
     };
   }

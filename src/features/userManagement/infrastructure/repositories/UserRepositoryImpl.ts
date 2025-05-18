@@ -36,7 +36,7 @@ export class UserRepositoryImpl implements IUserRepository {
       });
 
       // Map UserOutputDto[] to User[]
-      return response.users.map((userDto) => new User(userDto));
+      return response.users.map((userDto) => new User({ ...userDto, createdAt: new Date(), updatedAt: new Date() }));
     } catch (error: unknown) {
       // Changed error type from any to unknown
       const httpError = error as HttpErrorWithResponse; // Use the defined interface

@@ -9,7 +9,7 @@ interface LeadListItemProps {
   onDelete?: (leadId: string) => void;
 }
 
-const LeadListItem: React.FC<LeadListItemProps> = ({ lead, onDemote, onEdit, onDelete }) => {
+const LeadListItem: React.FC<LeadListItemProps> = ({ lead, onDemote }) => {
   return (
     <tr className='hover:bg-gray-50'>
       <td className='px-6 py-4 whitespace-nowrap'>

@@ -2,6 +2,7 @@ import React from 'react';
 import AdminTabs from '../components/AdminTabs';
 import { Kudos } from '../../../kudos/presentation/components/KudosList';
 import { User } from '../../../userManagement/presentation/components/UserListItem';
+import { UserRole } from '@/features/userManagement/domain/entities/User';
 
 // Mock data for the admin dashboard
 const mockKudos: Kudos[] = [
@@ -54,19 +55,19 @@ const mockUsers: User[] = [
     id: '1',
     name: 'John Doe',
     email: 'john.doe@example.com',
-    role: 'team_member',
+    role: UserRole.TEAM_MEMBER,
   },
   {
     id: '2',
     name: 'Alice Brown',
     email: 'alice.brown@example.com',
-    role: 'team_member',
+    role: UserRole.TEAM_MEMBER,
   },
   {
     id: '3',
     name: 'Bob Wilson',
     email: 'bob.wilson@example.com',
-    role: 'team_member',
+    role: UserRole.TEAM_MEMBER,
   },
 ];
 
@@ -75,13 +76,13 @@ const mockLeads: User[] = [
     id: '4',
     name: 'Emma Johnson',
     email: 'emma.johnson@example.com',
-    role: 'tech_lead',
+    role: UserRole.TECH_LEAD,
   },
   {
     id: '5',
     name: 'Sam Taylor',
     email: 'sam.taylor@example.com',
-    role: 'tech_lead',
+    role: UserRole.TECH_LEAD,
   },
 ];
 

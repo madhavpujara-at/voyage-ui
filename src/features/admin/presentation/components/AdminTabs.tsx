@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import KudosList, { Kudos } from '../../../kudos/presentation/components/KudosList';
 import UserListTable from '../../../userManagement/presentation/components/UserListTable';
-import LeadListTable from '../../../userManagement/presentation/components/LeadListTable';
 import { User } from '../../../userManagement/presentation/components/UserListItem';
 
 interface TabButtonProps {
@@ -80,7 +79,7 @@ const AdminTabs: React.FC<AdminTabsProps> = ({
         {activeTab === 'leads' && (
           <div>
             <h2 className='text-lg font-medium text-gray-900 mb-4'>Tech Leads</h2>
-            <LeadListTable leads={leads} onDemote={onDemoteLead} onEdit={onEditUser} onDelete={onDeleteUser} />
+            <UserListTable users={leads} onDemote={onDemoteLead} onEdit={onEditUser} onDelete={onDeleteUser} />
           </div>
         )}
       </div>

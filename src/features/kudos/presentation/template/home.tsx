@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import Link from 'next/link';
 import AdminLayout from '../../../../components/layouts/AdminLayout';
 import KudosList from '../components/KudosList';
 import { useAuth } from '../../../../contexts/AuthContext';
@@ -24,9 +23,6 @@ const HomePage: React.FC = () => {
           <h1 className='text-2xl font-bold text-gray-900'>Kudos Wall</h1>
           <p className='text-gray-600'>Celebrate your team&apos;s achievements</p>
         </div>
-        <Link href='/create-kudos' className='bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700'>
-          Create Kudo Card
-        </Link>
       </div>
 
       {listError && <div className='mb-4 p-4 bg-red-100 text-red-700 rounded'>Error loading kudos: {listError}</div>}

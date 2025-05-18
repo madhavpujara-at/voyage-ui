@@ -8,43 +8,46 @@ import { UserRole } from '@/features/userManagement/domain/entities/User';
 const mockKudos: Kudos[] = [
   {
     id: '1',
-    recipient: 'Jane Smith',
-    team: 'Infra',
+    recipient: {
+      name: 'Jane Smith',
+    },
     category: 'Brilliant Idea',
     message:
       'Jane implemented a brilliant solution that improved our system performance by 40%. Her innovative approach saved us weeks of work!',
     from: {
       name: 'Michael Johnson',
-      date: 'May 10, 2023',
     },
+    date: 'May 10, 2023',
     likes: 3,
     comments: 2,
   },
   {
     id: '2',
-    recipient: 'David Lee',
-    team: 'UI',
+    recipient: {
+      name: 'David Lee',
+    },
     category: 'Great Teamwork',
     message:
       'David went out of his way to help our team meet the deadline. He stayed late and provided valuable insights that made the project successful.',
     from: {
       name: 'Sarah Williams',
-      date: 'May 8, 2023',
     },
+    date: 'May 8, 2023',
     likes: 2,
     comments: 1,
   },
   {
     id: '3',
-    recipient: 'Alex Chen',
-    team: 'API',
+    recipient: {
+      name: 'Alex Chen',
+    },
     category: 'Helping Hand',
     message:
       'Alex helped me understand the product requirements and was always available to answer my questions. His patience and knowledge made onboarding so much easier!',
     from: {
       name: 'Emily Davis',
-      date: 'May 5, 2023',
     },
+    date: 'May 5, 2023',
     likes: 2,
     comments: 0,
   },

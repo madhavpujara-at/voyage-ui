@@ -41,14 +41,15 @@ export const useKudosCardList = (authorId: string) => {
     // For now, we'll just use the IDs
     return {
       id: dto.id,
-      recipient: dto.recipientName,
-      team: dto.teamId, // In real app, replace with team name
+      recipient: {
+        name: dto.recipientName,
+      },
       category: dto.categoryId, // In real app, replace with category name
       message: dto.message,
       from: {
         name: dto.authorId, // In real app, replace with author name
-        date: dto.createdAt.toLocaleDateString(),
       },
+      date: dto.createdAt.toLocaleDateString(),
       likes: 0, // Default values
       comments: 0, // Default values
     };

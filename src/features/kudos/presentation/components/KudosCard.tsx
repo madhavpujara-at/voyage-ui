@@ -63,7 +63,7 @@ const KudosCard: React.FC<KudosCardProps> = ({ kudos, index = 0, className = '' 
       originX: `${originXValue}%`,
       originY: `${originYValue}%`,
     };
-  }, [kudos?.id || index]); // Safely access kudos.id with optional chaining
+  }, []);
 
   // Guard against missing kudos object
   if (!kudos) {

@@ -3,17 +3,15 @@ import { KudosApiRepository } from '../../infrastructure/repositories/KudosApiRe
 import { HttpService } from '../../../../shared/infrastructure/services/HttpService';
 import { ConfigService } from '../../../../shared/infrastructure/services/ConfigService';
 import { GetAllKudosCardUseCase } from '../../application/useCases/GetAllKudosCardUseCase';
-import { KudoCardMapper } from '../../application/mappers/KudoCardMapper';
 import { CreateKudoCardRequestDto } from '../../application/dtos/CreateKudoCardRequestDto';
 import { CreateKudoCardResponseDto } from '../../application/dtos/CreateKudoCardResponseDto';
-import { KudoCardDetailsDto } from '../../application/dtos/KudoCardDetailsDto';
 import { useCreateKudoCard } from './useCreateKudoCard';
 import { FailedToRetrieveKudosError } from '../../application/errors/FailedToRetrieveKudosError';
-import { Kudos } from '../components/KudosList';
+import { KudoCardApiResponse } from '../../domain/interfaces/IKudosRepository';
 
-export const useKudosCardList = (authorId: string) => {
+export const useKudosCardList = (giverId: string) => {
   // State for the list of kudos
-  const [kudos, setKudos] = useState<Kudos[]>([]);
+  const [kudos, setKudos] = useState<KudoCardApiResponse[]>([]);
   const [isLoadingList, setIsLoadingList] = useState(false);
   const [listError, setListError] = useState<string | null>(null);
 
@@ -27,33 +25,9 @@ export const useKudosCardList = (authorId: string) => {
     () => new KudosApiRepository(httpService, configService),
     [httpService, configService]
   );
-  const kudoCardMapper = useMemo(() => new KudoCardMapper(), []);
 
   // Initialize use case - memoize to prevent recreation on every render
-  const getAllKudosCardUseCase = useMemo(
-    () => new GetAllKudosCardUseCase(kudosRepository, kudoCardMapper),
-    [kudosRepository, kudoCardMapper]
-  );
-
-  // Function to map KudoCardDetailsDto to Kudos interface
-  const mapToKudos = useCallback((dto: KudoCardDetailsDto): Kudos => {
-    // In a real application, you would fetch team and category names
-    // For now, we'll just use the IDs
-    return {
-      id: dto.id,
-      recipient: {
-        name: dto.recipientName,
-      },
-      category: dto.categoryId, // In real app, replace with category name
-      message: dto.message,
-      from: {
-        name: dto.authorId, // In real app, replace with author name
-      },
-      date: dto.createdAt.toLocaleDateString(),
-      likes: 0, // Default values
-      comments: 0, // Default values
-    };
-  }, []);
+  const getAllKudosCardUseCase = useMemo(() => new GetAllKudosCardUseCase(kudosRepository), [kudosRepository]);
 
   // Function to fetch all kudos
   const fetchKudos = useCallback(async () => {
@@ -61,9 +35,8 @@ export const useKudosCardList = (authorId: string) => {
     setListError(null);
 
     try {
-      const kudoCardDetails = await getAllKudosCardUseCase.execute();
-      const mappedKudos = kudoCardDetails.map(mapToKudos);
-      setKudos(mappedKudos);
+      const kudoCards = await getAllKudosCardUseCase.execute();
+      setKudos(kudoCards);
     } catch (error) {
       let errorMessage = 'Failed to fetch kudos';
       if (error instanceof FailedToRetrieveKudosError) {
@@ -75,15 +48,19 @@ export const useKudosCardList = (authorId: string) => {
     } finally {
       setIsLoadingList(false);
     }
-  }, [getAllKudosCardUseCase, mapToKudos]);
+  }, [getAllKudosCardUseCase]);
 
   // Function to handle creating a new kudo card
   const handleCreateKudoCard = useCallback(
     async (data: CreateKudoCardRequestDto): Promise<CreateKudoCardResponseDto | null> => {
-      const result = await createKudoCard(data, authorId);
+      const result = await createKudoCard(data, {
+        giverId,
+        giverName: '', // We might want to fetch this from a user context in a real app
+        giverEmail: '', // We might want to fetch this from a user context in a real app
+      });
       return result;
     },
-    [createKudoCard, authorId]
+    [createKudoCard, giverId]
   );
 
   return {

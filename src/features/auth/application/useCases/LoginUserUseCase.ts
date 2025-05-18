@@ -2,15 +2,9 @@ import { IAuthRepository } from '../../domain/interfaces/IAuthRepository';
 import { LoginUserDto } from '../dtos/LoginUserDto';
 import { LoginUserResponseDto } from '../dtos/LoginUserResponseDto';
 import { InvalidCredentialsError, UserNotFoundError } from '../../domain/errors/AuthErrors';
-import { IHttpService } from '../../../../shared/infrastructure/interfaces/IHttpService';
-import { IConfigService } from '../../../../shared/infrastructure/interfaces/IConfigService';
 
 export class LoginUserUseCase {
-  constructor(
-    private readonly authRepository: IAuthRepository,
-    private readonly httpService: IHttpService,
-    private readonly configService: IConfigService
-  ) {}
+  constructor(private readonly authRepository: IAuthRepository) {}
 
   async execute(loginUserDto: LoginUserDto): Promise<LoginUserResponseDto> {
     try {

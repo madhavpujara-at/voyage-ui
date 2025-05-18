@@ -4,9 +4,13 @@ export interface KudoCardProps {
   id?: string;
   recipientName: string;
   teamId: string;
+  teamName?: string;
   categoryId: string;
+  categoryName?: string;
   message: string;
-  authorId: string;
+  giverId: string;
+  giverName?: string;
+  giverEmail?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -15,9 +19,13 @@ export class KudoCard {
   private readonly _id: string;
   private _recipientName: string;
   private _teamId: string;
+  private _teamName: string;
   private _categoryId: string;
+  private _categoryName: string;
   private _message: string;
-  private readonly _authorId: string;
+  private readonly _giverId: string;
+  private readonly _giverName: string;
+  private readonly _giverEmail: string;
   private readonly _createdAt: Date;
   private _updatedAt: Date;
 
@@ -25,9 +33,13 @@ export class KudoCard {
     this._id = props.id || '';
     this._recipientName = props.recipientName;
     this._teamId = props.teamId;
+    this._teamName = props.teamName || '';
     this._categoryId = props.categoryId;
+    this._categoryName = props.categoryName || '';
     this._message = props.message;
-    this._authorId = props.authorId;
+    this._giverId = props.giverId;
+    this._giverName = props.giverName || '';
+    this._giverEmail = props.giverEmail || '';
     this._createdAt = props.createdAt || new Date();
     this._updatedAt = props.updatedAt || new Date();
   }
@@ -45,16 +57,32 @@ export class KudoCard {
     return this._teamId;
   }
 
+  get teamName(): string {
+    return this._teamName;
+  }
+
   get categoryId(): string {
     return this._categoryId;
+  }
+
+  get categoryName(): string {
+    return this._categoryName;
   }
 
   get message(): string {
     return this._message;
   }
 
-  get authorId(): string {
-    return this._authorId;
+  get giverId(): string {
+    return this._giverId;
+  }
+
+  get giverName(): string {
+    return this._giverName;
+  }
+
+  get giverEmail(): string {
+    return this._giverEmail;
   }
 
   get createdAt(): Date {
@@ -69,9 +97,13 @@ export class KudoCard {
   public static create(props: {
     recipientName: string;
     teamId: string;
+    teamName?: string;
     categoryId: string;
+    categoryName?: string;
     message: string;
-    authorId: string;
+    giverId: string;
+    giverName?: string;
+    giverEmail?: string;
   }): KudoCard {
     // Validate recipientName
     if (!props.recipientName) {
@@ -101,9 +133,9 @@ export class KudoCard {
       throw new InvalidKudoCardPropertyError('Message must be between 1 and 500 characters');
     }
 
-    // Validate authorId
-    if (!props.authorId) {
-      throw new InvalidKudoCardPropertyError('Author ID is required');
+    // Validate giverId
+    if (!props.giverId) {
+      throw new InvalidKudoCardPropertyError('Giver ID is required');
     }
 
     return new KudoCard({
@@ -118,9 +150,13 @@ export class KudoCard {
     id: string;
     recipientName: string;
     teamId: string;
+    teamName: string;
     categoryId: string;
+    categoryName: string;
     message: string;
-    authorId: string;
+    giverId: string;
+    giverName: string;
+    giverEmail: string;
     createdAt: Date;
     updatedAt: Date;
   }): KudoCard {
@@ -133,9 +169,13 @@ export class KudoCard {
       id: this._id,
       recipientName: this._recipientName,
       teamId: this._teamId,
+      teamName: this._teamName,
       categoryId: this._categoryId,
+      categoryName: this._categoryName,
       message: this._message,
-      authorId: this._authorId,
+      giverId: this._giverId,
+      giverName: this._giverName,
+      giverEmail: this._giverEmail,
       createdAt: this._createdAt,
       updatedAt: this._updatedAt,
     };

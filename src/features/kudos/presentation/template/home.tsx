@@ -10,7 +10,6 @@ const HomePage: React.FC = () => {
 
   // Use our hook to fetch and manage kudos
   const { kudos, isLoadingList, listError, fetchKudos } = useKudosCardList(authorId);
-
   // Fetch kudos when the component mounts
   useEffect(() => {
     fetchKudos();

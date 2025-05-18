@@ -19,6 +19,21 @@ export interface Kudos {
   comments?: number;
 }
 
+// API response interface matching the raw response format
+export interface KudoCardResponse {
+  id: string;
+  message: string;
+  recipientName: string;
+  giverId: string;
+  giverEmail: string;
+  teamId: string;
+  teamName: string;
+  categoryId: string;
+  categoryName: string;
+  createdAt: string;
+  giverName: string;
+}
+
 // For backward compatibility with old kudos format
 interface LegacyKudos {
   id: string;
@@ -35,7 +50,7 @@ interface LegacyKudos {
 }
 
 interface KudosListProps {
-  kudos: (Kudos | LegacyKudos)[];
+  kudos: (Kudos | LegacyKudos | KudoCardResponse)[];
   className?: string;
 }
 
@@ -57,19 +72,44 @@ const getAvatar = (name: string): string => {
 };
 
 // Type guard to check if a kudos object is legacy format
-const isLegacyKudos = (kudos: Kudos | LegacyKudos): kudos is LegacyKudos => {
-  return typeof kudos.recipient === 'string';
+const isLegacyKudos = (kudos: Kudos | LegacyKudos | KudoCardResponse): kudos is LegacyKudos => {
+  return typeof (kudos as LegacyKudos).recipient === 'string';
+};
+
+// Type guard to check if a kudos object is API response format
+const isKudoCardResponse = (kudos: Kudos | LegacyKudos | KudoCardResponse): kudos is KudoCardResponse => {
+  return (kudos as KudoCardResponse).recipientName !== undefined;
 };
 
 const KudosList: React.FC<KudosListProps> = ({ kudos: rawKudos, className = '' }) => {
-  // Transform the incoming kudos data to match our new structure
   const kudos = rawKudos.map((kudo, index) => {
-    // If it's already in the new format, just return it with index
-    if (!isLegacyKudos(kudo)) {
+    if (!isLegacyKudos(kudo) && !isKudoCardResponse(kudo)) {
       return { ...kudo, index };
     }
 
-    // Transform from old format to new format
+    // If it's the KudoCardResponse format from API
+    if (isKudoCardResponse(kudo)) {
+      return {
+        id: kudo.id,
+        recipient: {
+          name: kudo.recipientName,
+          avatar: getAvatar(kudo.recipientName),
+          department: kudo.teamName || kudo.teamId,
+        },
+        category: kudo.categoryName || kudo.categoryId,
+        message: kudo.message,
+        from: {
+          name: kudo.giverName || 'Anonymous',
+          avatar: getAvatar(kudo.giverName || kudo.giverId),
+        },
+        date: new Date(kudo.createdAt).toLocaleDateString(),
+        likes: 0, // Default values
+        comments: 0, // Default values
+        index,
+      };
+    }
+
+    // Transform from old legacy format to new format
     return {
       id: kudo.id,
       recipient: {
@@ -91,6 +131,7 @@ const KudosList: React.FC<KudosListProps> = ({ kudos: rawKudos, className = '' }
     };
   });
 
+  console.log(kudos[0], 'kudos');
   if (kudos.length === 0) {
     return (
       <div className='text-center py-10'>

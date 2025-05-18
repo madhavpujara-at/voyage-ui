@@ -13,7 +13,14 @@ import { InvalidKudoCardPropertyError } from '../../domain/errors/InvalidKudoCar
 export class CreateKudoCardUseCase {
   constructor(private readonly kudosRepository: IKudosRepository) {}
 
-  async execute(data: CreateKudoCardRequestDto, authorId: string): Promise<CreateKudoCardResponseDto> {
+  async execute(
+    data: CreateKudoCardRequestDto,
+    giverData: {
+      giverId: string;
+      giverName?: string;
+      giverEmail?: string;
+    }
+  ): Promise<CreateKudoCardResponseDto> {
     try {
       // Validate input DTO
       const validation = data.validate();
@@ -25,9 +32,13 @@ export class CreateKudoCardUseCase {
       const kudoCard = KudoCard.create({
         recipientName: data.recipientName,
         teamId: data.teamId,
+        teamName: data.teamName,
         categoryId: data.categoryId,
+        categoryName: data.categoryName,
         message: data.message,
-        authorId,
+        giverId: giverData.giverId,
+        giverName: giverData.giverName,
+        giverEmail: giverData.giverEmail,
       });
 
       const result = await this.kudosRepository.create(kudoCard);

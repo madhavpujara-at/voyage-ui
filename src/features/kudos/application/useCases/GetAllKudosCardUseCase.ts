@@ -1,18 +1,16 @@
-import { IKudosRepository } from '../../domain/interfaces/IKudosRepository';
-import { KudoCardDetailsDto } from '../dtos/KudoCardDetailsDto';
-import { KudoCardMapper } from '../mappers/KudoCardMapper';
+import { IKudosRepository, KudoCardApiResponse } from '../../domain/interfaces/IKudosRepository';
 import { FailedToRetrieveKudosError } from '../errors/FailedToRetrieveKudosError';
 
 export class GetAllKudosCardUseCase {
-  constructor(private readonly kudosRepository: IKudosRepository, private readonly kudoCardMapper: KudoCardMapper) {}
+  constructor(private readonly kudosRepository: IKudosRepository) {}
 
-  async execute(): Promise<KudoCardDetailsDto[]> {
+  async execute(): Promise<KudoCardApiResponse[]> {
     try {
       // Get all kudo cards from repository
       const kudoCards = await this.kudosRepository.getAllKudosCard();
 
-      // Map domain entities to DTOs
-      return KudoCardMapper.toDetailsDtoList(kudoCards);
+      // Return raw response
+      return kudoCards;
     } catch (error) {
       // Wrap error
       throw new FailedToRetrieveKudosError(

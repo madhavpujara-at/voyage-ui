@@ -6,14 +6,27 @@ export class CreateKudoCardRequestDto {
 
   readonly teamId: string;
 
+  readonly teamName?: string;
+
   readonly categoryId: string;
+
+  readonly categoryName?: string;
 
   readonly message: string;
 
-  constructor(data: { recipientName: string; teamId: string; categoryId: string; message: string }) {
+  constructor(data: {
+    recipientName: string;
+    teamId: string;
+    teamName?: string;
+    categoryId: string;
+    categoryName?: string;
+    message: string;
+  }) {
     this.recipientName = data.recipientName;
     this.teamId = data.teamId;
+    this.teamName = data.teamName;
     this.categoryId = data.categoryId;
+    this.categoryName = data.categoryName;
     this.message = data.message;
   }
 

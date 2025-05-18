@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { CreateKudoCardRequestDto } from '../../application/dtos/CreateKudoCardRequestDto';
 import { useKudosCardList } from '../hooks/useKudosCardList';
 import { useAuth } from '../../../../contexts/AuthContext';
-import { TEAMS } from '../../domain/constants/teamConstants';
-import { CATEGORIES } from '../../domain/constants/categoryConstants';
+import { DEPARTMENT_TEAMS } from '../../domain/constants/teamConstants';
+import { RECOGNITION_CATEGORIES } from '../../domain/constants/categoryConstants';
 
 interface KudoCardFormProps {
   onSuccess?: () => void;
@@ -12,9 +12,9 @@ interface KudoCardFormProps {
 
 const KudoCardForm: React.FC<KudoCardFormProps> = ({ onSuccess, className = '' }) => {
   const { user } = useAuth();
-  const authorId = user?.id || '';
+  const giverId = user?.id || '';
 
-  const { createKudoCard, isCreating, createError, createSuccess } = useKudosCardList(authorId);
+  const { createKudoCard, isCreating, createError, createSuccess } = useKudosCardList(giverId);
 
   const [formData, setFormData] = useState({
     recipientName: '',
@@ -31,8 +31,16 @@ const KudoCardForm: React.FC<KudoCardFormProps> = ({ onSuccess, className = '' }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Get the team and category names based on selected IDs
+    const selectedTeam = DEPARTMENT_TEAMS.find((team) => team.id === formData.teamId);
+    const selectedCategory = RECOGNITION_CATEGORIES.find((category) => category.id === formData.categoryId);
+
     // Create DTO from form data
-    const requestDto = new CreateKudoCardRequestDto(formData);
+    const requestDto = new CreateKudoCardRequestDto({
+      ...formData,
+      teamName: selectedTeam?.name,
+      categoryName: selectedCategory?.name,
+    });
 
     // Call create function
     const result = await createKudoCard(requestDto);
@@ -92,7 +100,7 @@ const KudoCardForm: React.FC<KudoCardFormProps> = ({ onSuccess, className = '' }
             required
           >
             <option value=''>Select a team</option>
-            {TEAMS.map((team) => (
+            {DEPARTMENT_TEAMS.map((team) => (
               <option key={team.id} value={team.id}>
                 {team.name}
               </option>
@@ -113,7 +121,7 @@ const KudoCardForm: React.FC<KudoCardFormProps> = ({ onSuccess, className = '' }
             required
           >
             <option value=''>Select a category</option>
-            {CATEGORIES.map((category) => (
+            {RECOGNITION_CATEGORIES.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}
               </option>

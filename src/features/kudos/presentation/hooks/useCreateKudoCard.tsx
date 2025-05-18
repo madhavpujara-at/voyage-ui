@@ -26,7 +26,11 @@ export const useCreateKudoCard = () => {
 
   const createKudoCard = async (
     data: CreateKudoCardRequestDto,
-    authorId: string
+    giverData: {
+      giverId: string;
+      giverName?: string;
+      giverEmail?: string;
+    }
   ): Promise<CreateKudoCardResponseDto | null> => {
     setIsLoading(true);
     setError(null);
@@ -34,7 +38,7 @@ export const useCreateKudoCard = () => {
     setCreatedCardId(null);
 
     try {
-      const response: CreateKudoCardResponseDto = await createKudoCardUseCase.execute(data, authorId);
+      const response: CreateKudoCardResponseDto = await createKudoCardUseCase.execute(data, giverData);
 
       setSuccess(true);
       setCreatedCardId(response.id); // Assuming response has an id

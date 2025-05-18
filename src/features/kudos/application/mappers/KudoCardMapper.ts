@@ -12,9 +12,13 @@ export class KudoCardMapper {
       id: entity.id,
       recipientName: entity.recipientName,
       teamId: entity.teamId,
+      teamName: entity.teamName,
       categoryId: entity.categoryId,
+      categoryName: entity.categoryName,
       message: entity.message,
-      authorId: entity.authorId,
+      giverId: entity.giverId,
+      giverName: entity.giverName,
+      giverEmail: entity.giverEmail,
       createdAt: entity.createdAt,
     });
   }

@@ -3,15 +3,12 @@ export interface Category {
   name: string;
 }
 
-export const CATEGORIES: Category[] = [
-  { id: 'category-1', name: 'Innovation Category' },
-  { id: 'category-2', name: 'Collaboration Category' },
-  { id: 'category-3', name: 'Efficiency Category' },
-  { id: 'category-4', name: 'Mentorship Category' },
-  { id: 'category-5', name: 'Excellence Category' },
-  { id: 'f7a22331-263a-4727-9369-1747555fe13f', name: 'Innovation Category 17475' },
-  { id: '0c5feaf1-30dd-4082-b7c9-17475592c73e', name: 'Collaboration Category 17475' },
-  { id: '51e223e3-1681-4414-8c51-17475592c7ed', name: 'Efficiency Category 17475' },
-  { id: '20b247ce-00be-4ebb-80a9-17475592c7f3', name: 'Mentorship Category 17475' },
-  { id: '52c38141-84fe-4d19-b9f8-17475592c7fc', name: 'Excellence Category 17475' },
+export const RECOGNITION_CATEGORIES: Category[] = [
+  { id: '48702b2e-41a7-48cb-8de3-170ac329668a', name: 'Problem Solving' },
+  { id: '4dfd1423-124f-47f7-b2c0-bad53a9370f5', name: 'Quality Excellence' },
+  { id: '97c7cb93-151b-43c2-b674-df7483a9504b', name: 'Customer Focus' },
+  { id: 'bf275da8-815f-41ed-b5a4-fdc3472be12a', name: 'Team Player' },
+  { id: 'c1ebb2a1-326e-4cf0-8e16-5a4b42c6eb74', name: 'Going Above and Beyond' },
+  { id: 'daddcad0-b232-4547-b63d-210b6513a569', name: 'Innovation' },
+  { id: 'db6690ff-80c0-4643-af61-24264e2ace5b', name: 'Leadership' },
 ];

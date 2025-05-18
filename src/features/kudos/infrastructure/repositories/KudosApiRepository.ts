@@ -11,19 +11,23 @@ interface CreateKudoCardApiResponse {
   success: boolean;
 }
 
-interface KudoCardApiItem {
+// Updated API response format to match the raw response
+export interface KudoCardApiResponse {
   id: string;
-  recipientName: string;
-  teamId: string;
-  categoryId: string;
   message: string;
-  authorId: string;
-  createdAt: string; // API returns dates as strings
-  updatedAt: string; // API returns dates as strings
+  recipientName: string;
+  giverId: string;
+  giverEmail: string;
+  teamId: string;
+  teamName: string;
+  categoryId: string;
+  categoryName: string;
+  createdAt: string;
+  giverName: string;
 }
 
 interface GetAllKudoCardsApiResponse {
-  kudoCards: KudoCardApiItem[];
+  kudoCards: KudoCardApiResponse[];
   total: number;
 }
 
@@ -63,7 +67,7 @@ export class KudosApiRepository implements IKudosRepository {
     }
   }
 
-  async getAllKudosCard(): Promise<KudoCard[]> {
+  async getAllKudosCard(): Promise<KudoCardApiResponse[]> {
     try {
       // Get API endpoint from config
       const apiPath = this.configService.getApiPaths().kudoCards;
@@ -76,19 +80,8 @@ export class KudosApiRepository implements IKudosRepository {
       // Handle response format with wrapped kudoCards array
       const kudoCards = response.kudoCards || [];
 
-      // Map API response to domain entities
-      return kudoCards.map((item) =>
-        KudoCard.reconstitute({
-          id: item.id,
-          recipientName: item.recipientName,
-          teamId: item.teamId,
-          categoryId: item.categoryId,
-          message: item.message,
-          authorId: item.authorId,
-          createdAt: new Date(item.createdAt),
-          updatedAt: new Date(item.updatedAt),
-        })
-      );
+      // Return raw API response instead of domain objects
+      return kudoCards;
     } catch (error: unknown) {
       // Handle specific errors if needed
       const httpError = error as { response?: { status: number } };

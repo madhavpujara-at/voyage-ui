@@ -61,7 +61,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, isLoading = false, erro
           error={validationErrors.email}
           required
           textColor='text-blue-800'
-          placeholderColor='placeholder-purple-300'
+          placeholderColor='placeholder-gray-500'
         />
 
         <FormField

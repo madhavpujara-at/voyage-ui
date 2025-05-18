@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import KudosList, { Kudos } from '../../../kudos/presentation/components/KudosList';
-import UserListTable from '../../../users/presentation/components/UserListTable';
-import LeadListTable from '../../../users/presentation/components/LeadListTable';
-import { User } from '../../../users/presentation/components/UserListItem';
+import UserListTable from '../../../userManagement/presentation/components/UserListTable';
+import LeadListTable from '../../../userManagement/presentation/components/LeadListTable';
+import { User } from '../../../userManagement/presentation/components/UserListItem';
 
 interface TabButtonProps {
   isActive: boolean;

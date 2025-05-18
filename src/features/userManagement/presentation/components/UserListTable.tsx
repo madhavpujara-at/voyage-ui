@@ -1,14 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import UserListItem, { User } from './UserListItem';
 
 interface UserListTableProps {
   users: User[];
   onPromote?: (userId: string) => void;
+  onDemote?: (userId: string) => void;
   onEdit?: (userId: string) => void;
   onDelete?: (userId: string) => void;
 }
 
-const UserListTable: React.FC<UserListTableProps> = ({ users, onPromote, onEdit, onDelete }) => {
+const UserListTable: React.FC<UserListTableProps> = ({ users, onPromote, onDemote, onEdit, onDelete }) => {
+  const [loadingUsers, setLoadingUsers] = useState<Record<string, boolean>>({});
+
+  const handleRoleChange = async (userId: string, action: 'promote' | 'demote') => {
+    setLoadingUsers((prev) => ({ ...prev, [userId]: true }));
+    try {
+      if (action === 'promote' && onPromote) {
+        await onPromote(userId);
+      } else if (action === 'demote' && onDemote) {
+        await onDemote(userId);
+      }
+    } finally {
+      setLoadingUsers((prev) => ({ ...prev, [userId]: false }));
+    }
+  };
+
   if (users.length === 0) {
     return (
       <div className='text-center py-10'>
@@ -44,7 +60,15 @@ const UserListTable: React.FC<UserListTableProps> = ({ users, onPromote, onEdit,
               </thead>
               <tbody className='bg-white divide-y divide-gray-200'>
                 {users.map((user) => (
-                  <UserListItem key={user.id} user={user} onPromote={onPromote} onEdit={onEdit} onDelete={onDelete} />
+                  <UserListItem
+                    key={user.id}
+                    user={user}
+                    onPromote={() => handleRoleChange(user.id, 'promote')}
+                    onDemote={() => handleRoleChange(user.id, 'demote')}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                    isLoading={loadingUsers[user.id] || false}
+                  />
                 ))}
               </tbody>
             </table>

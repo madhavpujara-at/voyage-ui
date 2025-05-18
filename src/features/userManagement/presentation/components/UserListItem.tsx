@@ -1,28 +1,31 @@
 import React from 'react';
 import Button from '../../../../components/atoms/Button';
+import { UserRole } from '@/features/userManagement/domain/entities/User';
 
 export interface User {
   id: string;
   name: string;
   email: string;
-  role: 'team_member' | 'tech_lead' | 'admin';
+  role: UserRole;
 }
 
 interface UserListItemProps {
   user: User;
   onPromote?: (userId: string) => void;
+  onDemote?: (userId: string) => void;
   onEdit?: (userId: string) => void;
   onDelete?: (userId: string) => void;
+  isLoading?: boolean;
 }
 
-const UserListItem: React.FC<UserListItemProps> = ({ user, onPromote, onEdit, onDelete }) => {
+const UserListItem: React.FC<UserListItemProps> = ({ user, onPromote, onDemote, isLoading = false }) => {
   const getRoleBadge = (role: string) => {
     switch (role) {
-      case 'team_member':
+      case UserRole.TEAM_MEMBER:
         return <span className='px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800'>Team Member</span>;
-      case 'tech_lead':
+      case UserRole.TECH_LEAD:
         return <span className='px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800'>Tech Lead</span>;
-      case 'admin':
+      case UserRole.ADMIN:
         return <span className='px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-800'>Admin</span>;
       default:
         return null;
@@ -47,9 +50,14 @@ const UserListItem: React.FC<UserListItemProps> = ({ user, onPromote, onEdit, on
       </td>
       <td className='px-6 py-4 whitespace-nowrap text-right text-sm font-medium'>
         <div className='flex justify-end gap-2'>
-          {user.role === 'team_member' && onPromote && (
-            <Button variant='secondary' size='sm' onClick={() => onPromote(user.id)}>
-              Promote to Lead
+          {user.role === UserRole.TEAM_MEMBER && onPromote && (
+            <Button variant='secondary' size='sm' onClick={() => onPromote(user.id)} disabled={isLoading}>
+              {isLoading ? 'Processing...' : 'Promote to Lead'}
+            </Button>
+          )}
+          {user.role === UserRole.TECH_LEAD && onDemote && (
+            <Button variant='secondary' size='sm' onClick={() => onDemote(user.id)} disabled={isLoading}>
+              {isLoading ? 'Processing...' : 'Demote to Member'}
             </Button>
           )}
           {/* {onEdit && (

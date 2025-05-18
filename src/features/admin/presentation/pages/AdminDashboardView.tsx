@@ -1,7 +1,7 @@
 import React from 'react';
 import AdminTabs from '../components/AdminTabs';
 import { Kudos } from '../../../kudos/presentation/components/KudosList';
-import { User } from '../../../users/presentation/components/UserListItem';
+import { User } from '../../../userManagement/presentation/components/UserListItem';
 
 // Mock data for the admin dashboard
 const mockKudos: Kudos[] = [

@@ -1,135 +1,121 @@
 import React from 'react';
-import Card from '@/components/atoms/Card';
 
-interface KudosCardProps {
-  recipient: string;
-  team: string;
-  category: string;
+// Define sticky note background colors
+const stickyNoteColors = [
+  ['bg-yellow-100', 'bg-yellow-50'],
+  ['bg-green-100', 'bg-green-50'],
+  ['bg-blue-100', 'bg-blue-50'],
+  ['bg-pink-100', 'bg-pink-50'],
+  ['bg-purple-100', 'bg-purple-50'],
+  ['bg-orange-100', 'bg-orange-50'],
+];
+
+// Category badge styles for various recognition types
+const categoryStyles: Record<string, string> = {
+  'Brilliant Idea': 'bg-blue-500 text-white',
+  'Great Teamwork': 'bg-green-500 text-white',
+  'Problem Solver': 'bg-pink-500 text-white',
+  'Customer Hero': 'bg-purple-500 text-white',
+  'Going Above & Beyond': 'bg-purple-500 text-white',
+  Innovation: 'bg-indigo-500 text-white',
+};
+
+interface UserInfo {
+  name: string;
+  avatar?: string;
+  department?: string;
+  role?: string;
+}
+
+export interface Kudos {
+  id: string | number;
+  recipient: UserInfo;
+  from: UserInfo;
   message: string;
-  from: {
-    name: string;
-    date: string;
-  };
+  category: string;
+  date: string;
   likes?: number;
   comments?: number;
+  index?: number; // Optional index that might be passed from the parent
+}
+
+interface KudosCardProps {
+  kudos: Kudos;
+  index: number;
   className?: string;
 }
 
-const KudosCard: React.FC<KudosCardProps> = ({
-  recipient,
-  team,
-  category,
-  message,
-  from,
-  likes = 0,
-  comments = 0,
-  className = '',
-}) => {
-  const getCategoryStyle = (category: string) => {
-    const styles: Record<string, { bg: string; text: string }> = {
-      'Helping Hand': { bg: 'bg-blue-100', text: 'text-blue-800' },
-      'Well Done': { bg: 'bg-green-100', text: 'text-green-800' },
-      'Great Teamwork': { bg: 'bg-green-100', text: 'text-green-800' },
-      'Proud of You': { bg: 'bg-purple-100', text: 'text-purple-800' },
-      'Outstanding Achievement': { bg: 'bg-red-100', text: 'text-red-800' },
-      'Brilliant Idea': { bg: 'bg-blue-100', text: 'text-blue-800' },
-      'Amazing Support': { bg: 'bg-teal-100', text: 'text-teal-800' },
-      Innovation: { bg: 'bg-indigo-100', text: 'text-indigo-800' },
-    };
+const KudosCard: React.FC<KudosCardProps> = ({ kudos, index = 0, className = '' }) => {
+  // Guard against missing kudos object
+  if (!kudos) {
+    console.error('KudosCard rendered without a kudos object!');
+    return null;
+  }
 
-    return styles[category] || { bg: 'bg-gray-100', text: 'text-gray-800' };
-  };
+  // Get background colors based on index
+  const [bodyColor, headerColor] = stickyNoteColors[index % stickyNoteColors.length];
 
-  const categoryStyle = getCategoryStyle(category);
+  // Generate a random slight rotation (-1, 0, or 1 degree)
+  const rotateDeg = Math.floor(Math.random() * 3) - 1;
+
+  // Get category badge style (or default to gray if not found)
+  const categoryBadgeStyle = categoryStyles[kudos.category] || 'bg-gray-500 text-white';
 
   return (
-    <Card className={`overflow-hidden ${className}`}>
-      <div className='mb-4'>
-        <div className='flex justify-between items-start'>
-          <div>
-            <h3 className='font-bold text-lg text-gray-900'>{recipient}</h3>
-            <p className='text-gray-500 text-sm'>{team}</p>
+    <div
+      className={`rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 ${bodyColor} ${className}`}
+      style={{
+        transform: `rotate(${rotateDeg}deg)`,
+        animationDelay: `${index * 0.05}s`,
+      }}
+    >
+      {/* Header section with recipient info and category */}
+      <div className={`p-4 ${headerColor} rounded-t-lg`}>
+        <div className='flex items-start'>
+          {kudos.recipient.avatar && (
+            <img
+              src={kudos.recipient.avatar}
+              alt={kudos.recipient.name}
+              className='h-12 w-12 rounded-full object-cover border-2 border-white shadow-md mr-3'
+            />
+          )}
+          <div className='flex-1'>
+            <div className='flex justify-between items-start'>
+              <div>
+                <h3 className='font-bold text-lg text-gray-900'>{kudos.recipient.name}</h3>
+                <p className='text-gray-500 text-sm'>
+                  {kudos.recipient.department || ''}
+                  {kudos.recipient.role && ` • ${kudos.recipient.role}`}
+                </p>
+              </div>
+              <span className={`px-3 py-1 rounded-full text-xs font-semibold ${categoryBadgeStyle}`}>
+                {kudos.category}
+              </span>
+            </div>
           </div>
-          <span className={`px-2 py-1 rounded-full text-xs font-medium ${categoryStyle.bg} ${categoryStyle.text}`}>
-            {category}
-          </span>
         </div>
       </div>
 
-      <p className='text-gray-700 mb-4'>{message}</p>
-
-      <div className='pt-4 border-t border-gray-100'>
-        <div className='flex justify-between items-center'>
-          <div className='flex items-center space-x-1'>
-            <svg
-              className='w-4 h-4 text-gray-400'
-              xmlns='http://www.w3.org/2000/svg'
-              viewBox='0 0 20 20'
-              fill='currentColor'
-            >
-              <path d='M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z' />
-            </svg>
-            <span className='text-sm text-gray-500'>From: {from.name}</span>
-          </div>
-          <span className='text-sm text-gray-500'>{from.date}</span>
-        </div>
-
-        <div className='flex mt-4 space-x-6'>
-          <button className='flex items-center text-gray-500 hover:text-purple-500'>
-            <svg
-              className='w-4 h-4 mr-1'
-              xmlns='http://www.w3.org/2000/svg'
-              fill='none'
-              viewBox='0 0 24 24'
-              stroke='currentColor'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth={2}
-                d='M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5'
-              />
-            </svg>
-            <span>{likes}</span>
-          </button>
-
-          <button className='flex items-center text-gray-500 hover:text-purple-500'>
-            <svg
-              className='w-4 h-4 mr-1'
-              xmlns='http://www.w3.org/2000/svg'
-              fill='none'
-              viewBox='0 0 24 24'
-              stroke='currentColor'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth={2}
-                d='M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z'
-              />
-            </svg>
-            <span>{comments}</span>
-          </button>
-
-          <button className='flex items-center text-gray-500 hover:text-purple-500 ml-auto'>
-            <svg
-              className='w-4 h-4'
-              xmlns='http://www.w3.org/2000/svg'
-              fill='none'
-              viewBox='0 0 24 24'
-              stroke='currentColor'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth={2}
-                d='M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z'
-              />
-            </svg>
-          </button>
-        </div>
+      {/* Message body */}
+      <div className='p-5'>
+        <p className='text-gray-700 mb-4'>{kudos.message}</p>
       </div>
-    </Card>
+
+      {/* Footer with sender info and date */}
+      <div className='px-5 pb-4 pt-2 border-t border-gray-200 flex justify-between items-center'>
+        <div className='flex items-center'>
+          {kudos.from.avatar && (
+            <img
+              src={kudos.from.avatar}
+              alt={kudos.from.name}
+              className='h-6 w-6 rounded-full object-cover border border-gray-200 shadow-sm mr-2'
+            />
+          )}
+          <span className='text-sm text-gray-600'>From: {kudos.from.name}</span>
+        </div>
+        <span className='text-sm text-gray-500'>{kudos.date}</span>
+      </div>
+    </div>
   );
 };
 

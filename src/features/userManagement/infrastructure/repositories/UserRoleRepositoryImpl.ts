@@ -1,4 +1,4 @@
-import { User, UserRole } from '../../domain/entities/User';
+import { UserRole } from '../../domain/entities/User';
 import { FailToDemoteLeadError } from '../../domain/errors/FailToDemoteLeadError';
 import { FailToPromoteMemberError } from '../../domain/errors/FailToPromoteMemberError';
 import { InvalidRoleTransitionError } from '../../domain/errors/InvalidRoleTransitionError';
@@ -8,42 +8,43 @@ import { IHttpService } from '../../../../shared/infrastructure/interfaces/IHttp
 import { IConfigService } from '../../../../shared/infrastructure/interfaces/IConfigService';
 
 interface UserApiResponse {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  createdAt: string;
-  updatedAt: string;
+  data: {
+    id: string;
+    email: string;
+    role: string;
+    updatedAt: string;
+  };
+  success: boolean;
 }
 
 export class UserRoleRepositoryImpl implements IUserRoleRepository {
   constructor(private readonly httpService: IHttpService, private readonly configService: IConfigService) {}
 
-  private mapResponseToUser(response: UserApiResponse): User {
-    return new User(
-      response.id,
-      response.name,
-      response.email,
-      '', // Password is not returned from API
-      response.role as UserRole,
-      new Date(response.createdAt),
-      new Date(response.updatedAt)
-    );
-  }
+  // private mapResponseToUser(response: UserApiResponse): User {
+  //   return new User(
+  //     response.id,
+  //     response.name,
+  //     response.email,
+  //     '', // Password is not returned from API
+  //     response.role as UserRole,
+  //     new Date(response.createdAt),
+  //     new Date(response.updatedAt)
+  //   );
+  // }
 
-  async promoteToLead(userId: string): Promise<User> {
+  async promoteToLead(userId: string): Promise<string> {
     try {
       // Get base URL from config
-      const baseUrl = this.configService.getBaseUrl();
-      const path = `${baseUrl}/users/${userId}/role`;
+      const path = `/users/${userId}/role`;
 
-      // Call API endpoint
       const response = await this.httpService.patch<UserApiResponse>({
         path,
-        body: { newRole: 'TECH_LEAD' },
+        body: { newRole: UserRole.TECH_LEAD },
       });
 
-      return this.mapResponseToUser(response);
+      console.log('response', response);
+
+      return response.data.id;
     } catch (error: unknown) {
       // Handle specific errors
       const httpError = error as { response?: { status: number } };
@@ -60,11 +61,10 @@ export class UserRoleRepositoryImpl implements IUserRoleRepository {
     }
   }
 
-  async demoteToMember(userId: string): Promise<User> {
+  async demoteToMember(userId: string): Promise<string> {
     try {
       // Get base URL from config
-      const baseUrl = this.configService.getBaseUrl();
-      const path = `${baseUrl}/users/${userId}/role`;
+      const path = `/users/${userId}/role`;
 
       // Call API endpoint
       const response = await this.httpService.patch<UserApiResponse>({
@@ -72,7 +72,7 @@ export class UserRoleRepositoryImpl implements IUserRoleRepository {
         body: { newRole: 'TEAM_MEMBER' },
       });
 
-      return this.mapResponseToUser(response);
+      return response.data.id;
     } catch (error: unknown) {
       // Handle specific errors
       const httpError = error as { response?: { status: number } };

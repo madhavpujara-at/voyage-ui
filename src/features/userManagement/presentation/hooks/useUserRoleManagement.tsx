@@ -9,8 +9,8 @@ import { PromoteMemberToLeadUseCase } from '../../application/useCases/PromoteMe
 import { DemoteLeadToMemberUseCase } from '../../application/useCases/DemoteLeadToMemberUseCase';
 
 interface UserRoleManagementHook {
-  promoteUser: (userId: string, userName?: string) => Promise<void>;
-  demoteUser: (userId: string, userName?: string) => Promise<void>;
+  promoteUser: (userId: string, userName?: string) => Promise<boolean>;
+  demoteUser: (userId: string, userName?: string) => Promise<boolean>;
   isLoading: boolean;
   error: string | null;
   successMessage: string | null;
@@ -27,7 +27,7 @@ export const useUserRoleManagement = (userRoleRepository: IUserRoleRepository): 
     setSuccessMessage(null);
   };
 
-  const promoteUser = async (userId: string, userName?: string): Promise<void> => {
+  const promoteUser = async (userId: string, userName?: string): Promise<boolean> => {
     try {
       setIsLoading(true);
       clearMessages();
@@ -36,14 +36,16 @@ export const useUserRoleManagement = (userRoleRepository: IUserRoleRepository): 
       await updateUserRoleUseCase.execute(userId);
 
       setSuccessMessage(formatSuccessMessage('promotion', userName));
+      return true;
     } catch (err) {
       handleError(err, 'promotion', userName);
+      return false;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const demoteUser = async (userId: string, userName?: string): Promise<void> => {
+  const demoteUser = async (userId: string, userName?: string): Promise<boolean> => {
     try {
       setIsLoading(true);
       clearMessages();
@@ -52,8 +54,10 @@ export const useUserRoleManagement = (userRoleRepository: IUserRoleRepository): 
       await updateUserRoleUseCase.execute(userId);
 
       setSuccessMessage(formatSuccessMessage('demotion', userName));
+      return true;
     } catch (err) {
       handleError(err, 'demotion', userName);
+      return false;
     } finally {
       setIsLoading(false);
     }

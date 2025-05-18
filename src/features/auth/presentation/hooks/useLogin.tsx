@@ -26,7 +26,7 @@ export const useLogin = () => {
   const authRepository = new AuthRepositoryImpl(httpService, configService);
 
   // Initialize use case
-  const loginUserUseCase = new LoginUserUseCase(authRepository, httpService, configService);
+  const loginUserUseCase = new LoginUserUseCase(authRepository);
 
   const login = async (credentials: LoginUserDto): Promise<void> => {
     setIsLoading(true);

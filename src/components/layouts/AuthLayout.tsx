@@ -1,6 +1,5 @@
 import React, { ReactNode } from 'react';
 import Head from 'next/head';
-import Image from 'next/image';
 
 interface AuthLayoutProps {
   children: ReactNode;

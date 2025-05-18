@@ -21,7 +21,7 @@ const Navbar: React.FC<NavbarProps> = ({ username, userRole, onLogout }) => {
   };
 
   return (
-    <nav className='bg-white border-b border-gray-200 shadow-sm'>
+    <nav className='bg-[#0f766e] text-white shadow-md'>
       <div className='px-4 sm:px-6 lg:px-8'>
         <div className='flex h-16 justify-between'>
           <div className='flex'>
@@ -33,7 +33,7 @@ const Navbar: React.FC<NavbarProps> = ({ username, userRole, onLogout }) => {
               {/* Analytics tab is visible to all users */}
               <Link
                 href='/analytics'
-                className='inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                className='inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-teal-100 hover:border-teal-300 hover:text-white'
               >
                 Analytics
               </Link>
@@ -42,7 +42,7 @@ const Navbar: React.FC<NavbarProps> = ({ username, userRole, onLogout }) => {
               {userRole === UserRole.TECH_LEAD && (
                 <Link
                   href='/create-kudos'
-                  className='inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                  className='inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-teal-100 hover:border-teal-300 hover:text-white'
                 >
                   Create Kudos
                 </Link>
@@ -52,7 +52,7 @@ const Navbar: React.FC<NavbarProps> = ({ username, userRole, onLogout }) => {
               {userRole === UserRole.ADMIN && (
                 <Link
                   href='/team-members'
-                  className='inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                  className='inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-teal-100 hover:border-teal-300 hover:text-white'
                 >
                   Team Members
                 </Link>
@@ -62,7 +62,7 @@ const Navbar: React.FC<NavbarProps> = ({ username, userRole, onLogout }) => {
               {userRole === UserRole.ADMIN && (
                 <Link
                   href='/tech-leads'
-                  className='inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                  className='inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-teal-100 hover:border-teal-300 hover:text-white'
                 >
                   Tech Leads
                 </Link>
@@ -71,7 +71,7 @@ const Navbar: React.FC<NavbarProps> = ({ username, userRole, onLogout }) => {
           </div>
 
           <div className='flex items-center'>
-            <button type='button' className='p-1 rounded-full text-gray-400 hover:text-gray-500'>
+            <button type='button' className='p-1 rounded-full text-teal-200 hover:text-white'>
               <span className='sr-only'>View notifications</span>
               <svg
                 className='h-6 w-6'
@@ -91,10 +91,10 @@ const Navbar: React.FC<NavbarProps> = ({ username, userRole, onLogout }) => {
 
             <div className='ml-3 relative flex items-center'>
               <div className='flex items-center'>
-                <div className='h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium text-gray-700'>
+                <div className='h-8 w-8 rounded-full bg-teal-200 flex items-center justify-center text-sm font-medium text-teal-800'>
                   {username?.charAt(0).toUpperCase()}
                 </div>
-                <span className='ml-2 text-sm font-medium text-gray-700'>{username}</span>
+                <span className='ml-2 text-sm font-medium text-white'>{username}</span>
               </div>
 
               <div className='ml-4'>

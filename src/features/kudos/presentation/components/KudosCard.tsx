@@ -1,23 +1,23 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
-// Define sticky note background colors
+// Define sticky note background colors with more teal variations
 const stickyNoteColors = [
   ['bg-yellow-100', 'bg-yellow-50'],
   ['bg-green-100', 'bg-green-50'],
   ['bg-blue-100', 'bg-blue-50'],
-  ['bg-pink-100', 'bg-pink-50'],
-  ['bg-purple-100', 'bg-purple-50'],
+  ['bg-teal-100', 'bg-teal-50'],
+  ['bg-cyan-100', 'bg-cyan-50'],
   ['bg-orange-100', 'bg-orange-50'],
 ];
 
-// Category badge styles for various recognition types
+// Category badge styles for various recognition types, using teal as a primary color
 const categoryStyles: Record<string, string> = {
-  'Brilliant Idea': 'bg-blue-500 text-white',
-  'Great Teamwork': 'bg-green-500 text-white',
-  'Problem Solver': 'bg-pink-500 text-white',
-  'Customer Hero': 'bg-purple-500 text-white',
-  'Going Above & Beyond': 'bg-purple-500 text-white',
-  Innovation: 'bg-indigo-500 text-white',
+  'Brilliant Idea': 'bg-teal-600 text-white',
+  'Great Teamwork': 'bg-green-600 text-white',
+  'Problem Solver': 'bg-cyan-600 text-white',
+  'Customer Hero': 'bg-teal-500 text-white',
+  'Going Above & Beyond': 'bg-teal-700 text-white',
+  Innovation: 'bg-teal-600 text-white',
 };
 
 interface UserInfo {
@@ -46,6 +46,25 @@ interface KudosCardProps {
 }
 
 const KudosCard: React.FC<KudosCardProps> = ({ kudos, index = 0, className = '' }) => {
+  // Use useMemo to ensure the random values don't change on re-renders
+  // Moved outside conditional check to avoid React hook rules issues
+  const { rotateStyle, originX, originY } = useMemo(() => {
+    // Generate random rotation between -4 and 4 degrees
+    // Using a different approach to ensure more variety
+    const rotateValue = (Math.random() * 8 - 4).toFixed(1);
+
+    // Generate random transform origin points
+    // This makes the cards rotate from different points for more natural look
+    const originXValue = 40 + Math.random() * 20; // 40-60% (center-ish, but varied)
+    const originYValue = 40 + Math.random() * 20; // 40-60%
+
+    return {
+      rotateStyle: `rotate(${rotateValue}deg)`,
+      originX: `${originXValue}%`,
+      originY: `${originYValue}%`,
+    };
+  }, [kudos?.id || index]); // Safely access kudos.id with optional chaining
+
   // Guard against missing kudos object
   if (!kudos) {
     console.error('KudosCard rendered without a kudos object!');
@@ -55,22 +74,26 @@ const KudosCard: React.FC<KudosCardProps> = ({ kudos, index = 0, className = '' 
   // Get background colors based on index
   const [bodyColor, headerColor] = stickyNoteColors[index % stickyNoteColors.length];
 
-  // Generate a random slight rotation (-1, 0, or 1 degree)
-  const rotateDeg = Math.floor(Math.random() * 3) - 1;
-
-  // Get category badge style (or default to gray if not found)
-  const categoryBadgeStyle = categoryStyles[kudos.category] || 'bg-gray-500 text-white';
+  // Get category badge style (or default to teal if not found)
+  const categoryBadgeStyle = categoryStyles[kudos.category] || 'bg-teal-500 text-white';
 
   return (
     <div
-      className={`rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 ${bodyColor} ${className}`}
+      className={`rounded-lg shadow-[rgba(0,0,0,0.15)_2.4px_2.4px_3.2px] hover:shadow-[rgba(0,0,0,0.25)_0px_8px_16px] transition-all duration-300 ${bodyColor} ${className}`}
       style={{
-        transform: `rotate(${rotateDeg}deg)`,
+        transform: rotateStyle,
+        transformOrigin: `${originX} ${originY}`,
         animationDelay: `${index * 0.05}s`,
+        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
       }}
     >
       {/* Header section with recipient info and category */}
-      <div className={`p-4 ${headerColor} rounded-t-lg`}>
+      <div
+        className={`p-4 ${headerColor} rounded-t-lg border-b border-gray-200`}
+        style={{
+          boxShadow: 'inset 0px -2px 3px -1px rgba(0, 0, 0, 0.05)',
+        }}
+      >
         <div className='flex items-start'>
           {kudos.recipient.avatar && (
             <img
@@ -88,7 +111,7 @@ const KudosCard: React.FC<KudosCardProps> = ({ kudos, index = 0, className = '' 
                   {kudos.recipient.role && ` • ${kudos.recipient.role}`}
                 </p>
               </div>
-              <span className={`px-3 py-1 rounded-full text-xs font-semibold ${categoryBadgeStyle}`}>
+              <span className={`px-3 py-1 rounded-full text-xs font-semibold ${categoryBadgeStyle} shadow-sm`}>
                 {kudos.category}
               </span>
             </div>
@@ -97,8 +120,11 @@ const KudosCard: React.FC<KudosCardProps> = ({ kudos, index = 0, className = '' 
       </div>
 
       {/* Message body */}
-      <div className='p-5'>
-        <p className='text-gray-700 mb-4'>{kudos.message}</p>
+      <div className='p-5 relative'>
+        <p className='text-gray-700 mb-4 relative z-10'>{kudos.message}</p>
+
+        {/* Subtle texture overlay for paper effect */}
+        <div className='absolute inset-0 bg-gradient-to-br from-transparent to-black/5 opacity-10 pointer-events-none'></div>
       </div>
 
       {/* Footer with sender info and date */}

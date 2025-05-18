@@ -11,7 +11,7 @@ interface AdminLayoutProps {
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children, onLogout }) => {
   const { user } = useAuth();
   return (
-    <div className='min-h-screen bg-gray-50'>
+    <div className='min-h-screen bg-[#F7F6F2]'>
       <Navbar username={user?.name} onLogout={onLogout} userRole={user?.role} />
 
       <main className='py-6'>
